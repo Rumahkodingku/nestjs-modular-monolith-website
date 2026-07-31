@@ -2,16 +2,14 @@ import Link from "next/link";
 import { githubUrl } from "@/lib/shared";
 import { LandingIcon } from "../landing-icon";
 import { Reveal } from "../landing-motion";
+import { NestJsIcon } from "@/components/ui/icon";
 
 export function FinalCtaSection() {
     return (
         <section className="section">
             <div className="site-container">
                 <Reveal className="relative overflow-hidden rounded-md border border-brand/30 bg-elevated px-6 py-12 sm:px-10 sm:py-16 lg:px-16">
-                    <LandingIcon
-                        className="pointer-events-none absolute -right-10 -top-14 size-64 rotate-12 text-brand/10 sm:size-80"
-                        icon="ph:cube"
-                    />
+                    <NestJsIcon className="pointer-events-none absolute -right-10 -top-14 size-64 rotate-12 text-brand/10 sm:size-80 opacity-30" />
                     <div className="relative max-w-3xl">
                         <h2 className="landing-section-title">A foundation you can understand</h2>
                         <p className="landing-section-copy mt-5">
