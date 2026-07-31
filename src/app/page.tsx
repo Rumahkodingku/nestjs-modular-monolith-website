@@ -27,7 +27,7 @@ export default function HomePage() {
     return (
         <div className="landing-page">
             <LandingNavigation />
-            <main>
+            <main id="main-content">
                 <HeroSection />
                 <ProductMetaSection />
                 <FeatureGridSection />

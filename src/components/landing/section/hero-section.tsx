@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { githubUrl } from "@/lib/shared";
+import { githubUrl, proRoute } from "@/lib/shared";
 import { LandingIcon } from "../landing-icon";
 
 export function HeroSection() {
@@ -20,7 +20,7 @@ export function HeroSection() {
                         building blocks already connected.
                     </p>
                     <div className="landing-enter landing-enter-delay-3 mt-9 flex flex-col gap-3 min-[420px]:flex-row">
-                        <Link className="landing-button landing-button-primary" href="/docs">
+                        <Link className="landing-button landing-button-primary" href={proRoute}>
                             Buy Pro Product
                             <LandingIcon className="size-4" icon="ph:arrow-right" />
                         </Link>

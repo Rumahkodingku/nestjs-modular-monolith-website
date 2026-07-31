@@ -1,5 +1,6 @@
 export const appName = 'NestJS Modular Monolith Starter Kit';
 export const docsRoute = '/docs';
+export const proRoute = '/pro';
 export const docsImageRoute = '/og/docs';
 export const docsContentRoute = '/llms.mdx/docs';
 
