@@ -1,0 +1,188 @@
+---
+title: Getting Started
+description: Install dependencies, configure local services, initialize PostgreSQL, and run the API.
+---
+
+# Getting started
+
+This guide uses the included Docker Compose services for PostgreSQL and Mailpit.
+You can use native services instead if their connection details match your
+environment configuration.
+
+## Prerequisites
+
+Install:
+
+- Node.js `>=24 <25`
+- Corepack and pnpm `10.34.5`
+- Docker and Docker Compose for the included local services
+
+Confirm the active versions:
+
+```bash
+node --version
+pnpm --version
+docker --version
+docker compose version
+```
+
+## 1. Install dependencies
+
+```bash
+corepack enable
+corepack prepare pnpm@10.34.5 --activate
+pnpm install --frozen-lockfile
+```
+
+## 2. Create the local environment
+
+```bash
+cp .env.example .env
+```
+
+For the included Docker Compose services, use:
+
+```dotenv
+NODE_ENV=development
+APP_NAME=nestjs-modular-monolith-starter-kit
+APP_HOST=0.0.0.0
+APP_PORT=3000
+APP_GLOBAL_PREFIX=api
+API_PUBLIC_URL=http://localhost:3000/api
+OPENAPI_ENABLED=true
+
+POSTGRES_PORT=5433
+DATABASE_URL=postgresql://postgres:postgres@localhost:5433/nestjs
+DATABASE_SSL=false
+
+MAIL_HOST=localhost
+MAIL_PORT=1025
+MAIL_SECURE=false
+MAIL_USER=
+MAIL_PASSWORD=
+MAIL_FROM=no-reply@localhost
+```
+
+Replace both JWT secrets with different random values containing at least 32
+characters. Review the complete [configuration reference](./configuration.mdx)
+before using the application outside local development.
+
+## 3. Start PostgreSQL and Mailpit
+
+```bash
+docker compose up -d postgres mailpit
+docker compose ps
+```
+
+The PostgreSQL service:
+
+- Runs PostgreSQL 17.
+- Uses the `nestjs` database.
+- Uses `postgres` for both the username and password.
+- Exposes container port `5432` on host port `${POSTGRES_PORT:-5433}`.
+- Stores data in the `postgres-data` volume.
+
+Mailpit exposes SMTP on port `1025` and its browser interface on port `8025`.
+
+Wait until PostgreSQL reports a healthy status before running migrations.
+
+### Use native PostgreSQL instead
+
+Create a database and a user with permission to create tables, indexes,
+constraints, functions, and triggers. Then update the connection:
+
+```dotenv
+POSTGRES_PORT=5432
+DATABASE_URL=postgresql://postgres:your-password@localhost:5432/your-database
+DATABASE_SSL=false
+```
+
+Do not mix the native PostgreSQL port or credentials with the Docker Compose
+values. Mailpit can still run independently:
+
+```bash
+docker compose up -d mailpit
+```
+
+## 4. Apply migrations
+
+Inspect migration status and apply pending migrations:
+
+```bash
+pnpm migration:show
+pnpm migration:run
+```
+
+`[X]` means a migration is applied. `[ ]` means it is pending.
+
+The application intentionally uses `synchronize: false`; changing an entity
+does not update the database automatically.
+
+## 5. Bootstrap an administrator
+
+Set:
+
+```dotenv
+BOOTSTRAP_ADMIN_EMAIL=admin@example.com
+BOOTSTRAP_ADMIN_PASSWORD=replace-with-a-strong-password
+BOOTSTRAP_ADMIN_DISPLAY_NAME=Administrator
+```
+
+Then run:
+
+```bash
+pnpm seed:admin
+```
+
+The command seeds RBAC data and idempotently creates or updates the bootstrap
+administrator with super-administrator access. Skip it if no initial
+administrator is required.
+
+## 6. Start the API
+
+```bash
+pnpm start:dev
+```
+
+Other run modes:
+
+```bash
+pnpm start
+pnpm start:debug
+pnpm build
+pnpm start:prod
+```
+
+`pnpm start:prod` requires a completed `pnpm build`.
+
+## Local URLs
+
+| Service              | URL                                      |
+| -------------------- | ---------------------------------------- |
+| API v1               | [http://localhost:3000/api/v1](http://localhost:3000/api/v1)                   |
+| Liveness             | [http://localhost:3000/health/liveness](http://localhost:3000/health/liveness) |
+| Readiness            | [http://localhost:3000/health/readiness](http://localhost:3000/health/readiness) |
+| Scalar API reference | [http://localhost:3000/docs](http://localhost:3000/docs)                       |
+| OpenAPI JSON         | [http://localhost:3000/openapi.json](http://localhost:3000/openapi.json)       |
+| Mailpit              | [http://localhost:8025](http://localhost:8025)                                |
+
+Health endpoints do not use the `/api` global prefix. Scalar and OpenAPI are
+registered only when `OPENAPI_ENABLED=true`.
+
+## Verify the installation
+
+```bash
+curl http://localhost:3000/health/liveness
+curl http://localhost:3000/health/readiness
+```
+
+The liveness response should be:
+
+```json
+{
+    "status": "ok"
+}
+```
+
+Read [Authentication](./authentication.mdx) to register and log in, or open
+Scalar to explore the complete API.

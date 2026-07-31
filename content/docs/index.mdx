@@ -1,13 +1,73 @@
 ---
-title: Hello World
-description: Your first document
+title: Documentation
+description: Learn what the starter kit provides, how its modules fit together, and where to begin.
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+# NestJS Modular Monolith Starter Kit
 
-## What is Next?
+This starter kit is a single deployable NestJS application organized around
+explicit business-module boundaries. It provides a working foundation for
+products that need authentication, user administration, role-based
+authorization, PostgreSQL persistence, and production-oriented HTTP behavior.
 
-<Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
-</Cards>
+## What is included
+
+- JWT access authentication and rotating refresh-token sessions.
+- HTTP-only refresh cookies and double-submit CSRF protection.
+- Registration, email verification, password changes, and session management.
+- Self-service and administrative user lifecycle operations.
+- Roles, permissions, per-user overrides, super-administrator safeguards, and
+  RBAC audit records.
+- PostgreSQL persistence with TypeORM and explicit migrations.
+- OpenAPI generation and a Scalar API reference.
+- Global validation, Problem Details errors, rate limiting, CORS, and Helmet.
+- Structured logs, request IDs, liveness, and readiness checks.
+- SMTP email delivery, Handlebars templates, and Mailpit for development.
+- Unit, end-to-end, and CI workflows.
+
+## Requirements
+
+| Tool       | Supported version                                     |
+| ---------- | ----------------------------------------------------- |
+| Node.js    | `>=24 <25`                                            |
+| pnpm       | `10.34.5`                                             |
+| PostgreSQL | 17 or a compatible release                            |
+| Docker     | Optional; used by the included local-service workflow |
+
+## Documentation map
+
+| Goal                         | Read                                                     |
+| ---------------------------- | -------------------------------------------------------- |
+| Run the API locally          | [Getting Started](./getting-started.mdx)                 |
+| Understand module boundaries | [Architecture](./architecture.mdx)                       |
+| Configure an environment     | [Configuration](./configuration.mdx)                     |
+| Integrate login and sessions | [Authentication](./authentication.mdx)                   |
+| Manage accounts              | [User Management](./user-management.mdx)                 |
+| Configure authorization      | [Role-Based Access Control](./rbac.mdx)                  |
+| Understand HTTP contracts    | [API Overview](./api-overview.mdx)                       |
+| Change the schema safely     | [Database and Migrations](./database-and-migrations.mdx) |
+| Build a production image     | [Deployment](./deployment.mdx)                           |
+| Operate the service          | [Operations](./operations.mdx)                           |
+| Verify a change              | [Testing](./testing.mdx)                                 |
+| Resolve a common failure     | [Troubleshooting](./troubleshooting.mdx)                 |
+
+## API discovery
+
+When `OPENAPI_ENABLED=true`, the running application exposes:
+
+- Scalar API reference: `http://localhost:3000/docs`
+- OpenAPI JSON: `http://localhost:3000/openapi.json`
+
+The generated OpenAPI document is the authoritative endpoint catalog. These
+guides focus on workflows, contracts, and operational behavior so endpoint
+details do not drift away from the code.
+
+## Recommended path
+
+1. Complete [Getting Started](./getting-started.mdx).
+2. Read [Architecture](./architecture.mdx) before adding a module.
+3. Review [Authentication](./authentication.mdx) and
+   [API Overview](./api-overview.mdx) before building a client.
+4. Use the local Scalar reference to inspect exact request and response schemas.
+5. Read [Deployment](./deployment.mdx) before creating a production
+   environment.

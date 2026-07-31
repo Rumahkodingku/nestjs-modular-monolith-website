@@ -1,0 +1,130 @@
+---
+title: Testing
+description: Run unit tests, end-to-end tests, static checks, coverage, and the same verification stages used by CI.
+---
+
+# Testing
+
+The project uses Jest for unit tests, Supertest for HTTP end-to-end tests, and
+Testcontainers support for isolated PostgreSQL workflows.
+
+## Unit tests
+
+Run the serial unit suite:
+
+```bash
+pnpm test
+```
+
+The explicit alias is:
+
+```bash
+pnpm test:unit
+```
+
+Watch mode and coverage:
+
+```bash
+pnpm test:watch
+pnpm test:cov
+```
+
+Tests matching `*.e2e-spec.ts` are excluded from the default unit configuration.
+
+## End-to-end tests
+
+E2E tests use their own Jest configuration:
+
+```bash
+pnpm test:e2e
+```
+
+They exercise the NestJS application, HTTP contracts, authentication,
+authorization, persistence, and OpenAPI behavior.
+
+Use a disposable database. The test data source prefers `.env.test`:
+
+```dotenv
+NODE_ENV=test
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/nestjs_test
+DATABASE_SSL=false
+LOG_LEVEL=error
+```
+
+Never point E2E tests at development, staging, or production data. Ensure the
+database name, port, username, and password match the test PostgreSQL instance.
+
+Apply migrations before running tests against a manually managed database:
+
+```bash
+NODE_ENV=test pnpm migration:run
+pnpm test:e2e
+```
+
+## Static checks
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm format:check
+```
+
+Automatic fixes modify files:
+
+```bash
+pnpm lint:fix
+pnpm format
+```
+
+Always inspect the resulting diff.
+
+## Production build
+
+```bash
+pnpm build
+```
+
+The Nest CLI builds the `api` application with webpack. A successful type check
+does not replace a production build, and a successful build does not replace
+tests.
+
+## CI workflow
+
+GitHub Actions runs on pull requests and pushes to `main`. The verification job:
+
+1. Starts PostgreSQL 17.
+2. Installs the lockfile dependencies with Node.js 24 and pnpm.
+3. Checks formatting.
+4. Runs ESLint.
+5. Runs TypeScript checks.
+6. Applies test migrations.
+7. Runs coverage tests.
+8. Runs E2E tests.
+9. Builds the API.
+10. Audits production dependencies at high severity.
+
+The workflow cancels older runs for the same branch or pull request.
+
+## Before opening a change
+
+Run:
+
+```bash
+pnpm format:check
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm test:e2e
+pnpm build
+```
+
+Also verify:
+
+- New schema behavior has a reviewed migration.
+- Trust-boundary validation is represented in DTOs.
+- New endpoints include OpenAPI metadata and expected error responses.
+- Authentication and permission requirements are covered by E2E tests.
+- Logs and errors do not expose secrets, raw tokens, or passwords.
+
+See [Database and Migrations](./database-and-migrations.mdx) for safe test
+database handling.

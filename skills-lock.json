@@ -1,0 +1,53 @@
+{
+    "version": 1,
+    "skills": {
+        "design-taste-frontend": {
+            "source": "nexu-io/open-design",
+            "sourceType": "github",
+            "skillPath": "skills/taste-skill/SKILL.md",
+            "computedHash": "487467674b8b57954ddffedb5424fd77f0efdfed0c8875bcc8327d688358782f"
+        },
+        "emil-design-eng": {
+            "source": "nexu-io/open-design",
+            "sourceType": "github",
+            "skillPath": "skills/emil-design-eng/SKILL.md",
+            "computedHash": "9279bbe065dde3b66b31ba3ecc887dd6b30b4a81e3473bcd9bf2e1067c7a83b4"
+        },
+        "frontend-design": {
+            "source": "anthropics/skills",
+            "sourceType": "github",
+            "skillPath": "skills/frontend-design/SKILL.md",
+            "computedHash": "4eabc66183767153e404b39d1b839b1c37f2d82d86f0a0d7e880a579d8d62336"
+        },
+        "impeccable-design-polish": {
+            "source": "nexu-io/open-design",
+            "sourceType": "github",
+            "skillPath": "skills/impeccable-design-polish/SKILL.md",
+            "computedHash": "4e503449a58d0609daba362aea73aebf920b532a9793446158cc8a907e821b78"
+        },
+        "react-best-practices": {
+            "source": "davila7/claude-code-templates",
+            "sourceType": "github",
+            "skillPath": "cli-tool/components/skills/web-development/react-best-practices/SKILL.md",
+            "computedHash": "6c9fa18c51cb00c74e9eb6241d3d39e9b1624f09583505cdc2aff397d6082107"
+        },
+        "ui-ux-pro-max": {
+            "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+            "sourceType": "github",
+            "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+            "computedHash": "f0916ca326ad6dbde1d0770b46956a213406b8ea4a19ed931bb4f2dc7d04c16d"
+        },
+        "vercel-react-best-practices": {
+            "source": "vercel-labs/agent-skills",
+            "sourceType": "github",
+            "skillPath": "skills/react-best-practices/SKILL.md",
+            "computedHash": "ca7b0c0c6e5f2750043f7f0cd72d16ac4e2abc48f9b5500d047a4b77a2506212"
+        },
+        "web-design-guidelines": {
+            "source": "nexu-io/open-design",
+            "sourceType": "github",
+            "skillPath": "skills/web-design-guidelines/SKILL.md",
+            "computedHash": "df2006a9f46ff0d4ea81bd42649a15d1b85440ed2ced14d9d0f3868a4ffad66d"
+        }
+    }
+}

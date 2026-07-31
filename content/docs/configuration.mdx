@@ -1,0 +1,164 @@
+---
+title: Configuration
+description: Configure the application, database, authentication, mail, limits, logging, and bootstrap administrator.
+---
+
+# Configuration
+
+Configuration is loaded through NestJS `ConfigModule` and validated before the
+application starts. Development uses `.env`; tests prefer `.env.test` and fall
+back to `.env`. Production ignores environment files and reads process
+environment variables.
+
+Copy the example for local development:
+
+```bash
+cp .env.example .env
+```
+
+## Application and HTTP
+
+| Variable               | Required or default                   | Description                                                               |
+| ---------------------- | ------------------------------------- | ------------------------------------------------------------------------- |
+| `NODE_ENV`             | `development`                         | One of `development`, `test`, or `production`                             |
+| `APP_NAME`             | `nestjs-modular-monolith-starter-kit` | Service name used by OpenAPI, logging, and PostgreSQL connection metadata |
+| `APP_HOST`             | `0.0.0.0`                             | Interface used by the HTTP listener                                       |
+| `APP_PORT`             | `3000`                                | HTTP listener port                                                        |
+| `APP_GLOBAL_PREFIX`    | `api`                                 | Prefix for versioned API routes                                           |
+| `API_PUBLIC_URL`       | `http://localhost:3000/api`           | Public API URL used to construct Problem Details identifiers              |
+| `APP_TRUST_PROXY_HOPS` | `1`                                   | Number of trusted reverse-proxy hops                                      |
+| `CORS_ORIGINS`         | `http://localhost:3001`               | Comma-separated browser origins allowed by CORS                           |
+| `OPENAPI_ENABLED`      | `false`                               | Registers `/docs` and `/openapi.json` when enabled                        |
+| `WEB_APP_URL`          | `http://localhost:3001`               | Frontend URL used by email-verification links                             |
+
+The application accepts `Content-Type`, `Authorization`, `X-Request-Id`, and
+`X-CSRF-Token` request headers. CORS credentials are enabled.
+
+## Database
+
+| Variable             | Required or default | Description                                                                       |
+| -------------------- | ------------------- | --------------------------------------------------------------------------------- |
+| `POSTGRES_PORT`      | `5433` in Compose   | Host port published by the PostgreSQL container; not consumed by the API directly |
+| `DATABASE_URL`       | Required            | Full `postgres://` or `postgresql://` connection URL                              |
+| `DATABASE_SSL`       | `false`             | Enables TLS with certificate verification                                         |
+| `DATABASE_POOL_SIZE` | `10`                | Maximum TypeORM/PostgreSQL pool size, from 1 to 100                               |
+
+For the included Compose service:
+
+```dotenv
+POSTGRES_PORT=5433
+DATABASE_URL=postgresql://postgres:postgres@localhost:5433/nestjs
+DATABASE_SSL=false
+DATABASE_POOL_SIZE=10
+```
+
+## JWT and cookies
+
+| Variable                   | Required or default             | Description                                                        |
+| -------------------------- | ------------------------------- | ------------------------------------------------------------------ |
+| `JWT_ACCESS_SECRET`        | Required, minimum 32 characters | Signs access tokens                                                |
+| `JWT_ACCESS_TTL`           | `15m`                           | Access-token lifetime using an integer plus `s`, `m`, `h`, or `d`  |
+| `JWT_REFRESH_SECRET`       | Required, minimum 32 characters | Signs refresh tokens; use a different value from the access secret |
+| `JWT_REFRESH_TTL`          | `30d`                           | Refresh-token and session lifetime, capped at 30 days              |
+| `JWT_ISSUER`               | `your-jwt-issuer`               | Expected JWT issuer                                                |
+| `JWT_AUDIENCE`             | `your-jwt-audience`             | Expected JWT audience                                              |
+| `AUTH_REFRESH_COOKIE_NAME` | `your-auth-refresh-cookie-name` | HTTP-only refresh-token cookie name                                |
+| `AUTH_CSRF_COOKIE_NAME`    | `your-auth-cookie-name`         | CSRF cookie name                                                   |
+| `AUTH_COOKIE_SECURE`       | `false`                         | Sends authentication cookies only over HTTPS                       |
+| `AUTH_COOKIE_SAME_SITE`    | `lax`                           | Cookie policy: `strict`, `lax`, or `none`                          |
+
+Production requires `AUTH_COOKIE_SECURE=true`. `SameSite=None` also requires
+secure cookies.
+
+## Passwords and verification
+
+| Variable                         | Required or default | Description                                 |
+| -------------------------------- | ------------------- | ------------------------------------------- |
+| `ARGON2_MEMORY_KIB`              | `65536`             | Argon2 memory usage in KiB; minimum `19456` |
+| `ARGON2_TIME_COST`               | `3`                 | Argon2 iteration cost; minimum `2`          |
+| `ARGON2_PARALLELISM`             | `1`                 | Argon2 parallelism, from 1 to 16            |
+| `EMAIL_VERIFICATION_TTL_MINUTES` | `1440`              | Email-verification token lifetime           |
+
+Increasing Argon2 costs increases password-hashing resource use. Measure the
+effect on the target runtime before changing production values.
+
+## Rate limits and uploads
+
+| Variable           | Required or default | Description                              |
+| ------------------ | ------------------- | ---------------------------------------- |
+| `THROTTLE_TTL_MS`  | `60000`             | Global rate-limit window in milliseconds |
+| `THROTTLE_LIMIT`   | `100`               | Maximum requests per global window       |
+| `UPLOAD_MAX_BYTES` | `10485760`          | Maximum configured upload size in bytes  |
+
+Authentication endpoints may define stricter per-route limits in addition to
+the global limit.
+
+## Mail
+
+| Variable        | Required or default | Description                                           |
+| --------------- | ------------------- | ----------------------------------------------------- |
+| `MAIL_HOST`     | Required            | SMTP host                                             |
+| `MAIL_PORT`     | `587`               | SMTP port                                             |
+| `MAIL_SECURE`   | `false`             | Uses a secure SMTP connection                         |
+| `MAIL_USER`     | Empty               | SMTP username; an empty value disables authentication |
+| `MAIL_PASSWORD` | Empty               | SMTP password                                         |
+| `MAIL_FROM`     | Required            | Default sender address                                |
+
+Mailpit development values:
+
+```dotenv
+MAIL_HOST=localhost
+MAIL_PORT=1025
+MAIL_SECURE=false
+MAIL_USER=
+MAIL_PASSWORD=
+MAIL_FROM=no-reply@localhost
+```
+
+## Bootstrap administrator
+
+| Variable                       | Required or default | Description                                   |
+| ------------------------------ | ------------------- | --------------------------------------------- |
+| `BOOTSTRAP_ADMIN_EMAIL`        | Empty               | Administrator email used by `pnpm seed:admin` |
+| `BOOTSTRAP_ADMIN_PASSWORD`     | Empty               | Administrator password used by the seed       |
+| `BOOTSTRAP_ADMIN_DISPLAY_NAME` | Empty               | Administrator display name used by the seed   |
+
+Do not set these in production unless the bootstrap command is intentionally
+being run. Do not commit real credentials.
+
+## Logging
+
+| Variable    | Required or default | Description                                                            |
+| ----------- | ------------------- | ---------------------------------------------------------------------- |
+| `LOG_LEVEL` | `info`              | One of `error`, `warn`, `info`, `http`, `verbose`, `debug`, or `silly` |
+
+Development console output is human-readable. Production console output and
+file transports use structured JSON. Tests do not create file transports.
+
+## Production validation
+
+The process refuses to start when:
+
+- `API_PUBLIC_URL` contains credentials, a query, or a fragment.
+- `NODE_ENV=production` and `API_PUBLIC_URL` is not HTTPS.
+- `NODE_ENV=production` and `AUTH_COOKIE_SECURE` is false.
+- `AUTH_COOKIE_SAME_SITE=none` and `AUTH_COOKIE_SECURE` is false.
+- A required value is missing or violates its schema.
+
+A minimal production-oriented excerpt:
+
+```dotenv
+NODE_ENV=production
+APP_HOST=0.0.0.0
+APP_PORT=3000
+API_PUBLIC_URL=https://api.example.com/api
+WEB_APP_URL=https://app.example.com
+AUTH_COOKIE_SECURE=true
+AUTH_COOKIE_SAME_SITE=lax
+DATABASE_SSL=true
+OPENAPI_ENABLED=false
+LOG_LEVEL=info
+```
+
+Supply secrets and service credentials through the deployment platform rather
+than a committed environment file.

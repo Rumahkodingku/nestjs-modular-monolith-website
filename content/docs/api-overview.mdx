@@ -1,0 +1,193 @@
+---
+title: API Overview
+description: Understand API URLs, versioning, authentication, response envelopes, Problem Details, pagination, request IDs, and OpenAPI.
+---
+
+# API overview
+
+The default versioned base URL is:
+
+```text
+http://localhost:3000/api/v1
+```
+
+`api` comes from `APP_GLOBAL_PREFIX`. URI versioning is enabled with version
+`1` as the default. Health endpoints are version-neutral and do not use the
+global prefix.
+
+## API reference
+
+When `OPENAPI_ENABLED=true`:
+
+- Scalar: [http://localhost:3000/docs](http://localhost:3000/docs)
+- OpenAPI JSON: [http://localhost:3000/openapi.json](http://localhost:3000/openapi.json)
+
+The generated OpenAPI document is the endpoint-level source of truth. It
+contains operation descriptions, DTO schemas, parameters, status codes,
+security requirements, and examples from the running application.
+
+## Authentication schemes
+
+| Scheme          | Transport                           | Usage                                                              |
+| --------------- | ----------------------------------- | ------------------------------------------------------------------ |
+| `access-token`  | `Authorization: Bearer <token>`     | Normal protected API requests                                      |
+| `refresh-token` | Configured HTTP-only cookie         | Refresh and current-session logout                                 |
+| `csrf-token`    | `X-CSRF-Token` plus matching cookie | Cookie-authenticated state changes and selected session operations |
+
+See [Authentication](./authentication.mdx) for the complete browser and
+session flow.
+
+## Successful responses
+
+JSON responses use a consistent envelope:
+
+```json
+{
+    "success": true,
+    "statusCode": 200,
+    "message": "Operation completed successfully.",
+    "data": {},
+    "meta": {},
+    "timestamp": "2026-01-01T00:00:00.000Z",
+    "requestId": "3c77755d-38a2-47fe-aef6-f39de829fe5e"
+}
+```
+
+`meta` is optional and is primarily used for pagination. `204 No Content`
+responses do not include an envelope.
+
+## Errors
+
+Failures use `application/problem+json`:
+
+```json
+{
+    "type": "http://localhost:3000/api/problems/http-404",
+    "title": "Resource not found",
+    "status": 404,
+    "detail": "User not found",
+    "instance": "http://localhost:3000/api/problems/instances/<uuid>",
+    "requestId": "<request-uuid>"
+}
+```
+
+The API includes `X-Request-Id`, `Content-Language: en`, and
+`Cache-Control: no-store` on error responses. Internal failures return the
+generic detail `An unexpected error occurred` and are logged server-side.
+
+Common statuses:
+
+| Status | Meaning                                                             |
+| ------ | ------------------------------------------------------------------- |
+| `400`  | Invalid identifier or request semantics                             |
+| `401`  | Missing, invalid, expired, or revoked authentication                |
+| `403`  | Valid identity without sufficient access, or failed CSRF validation |
+| `404`  | Resource not found                                                  |
+| `409`  | State or uniqueness conflict                                        |
+| `422`  | DTO validation failed                                               |
+| `429`  | Rate limit exceeded                                                 |
+| `500`  | Unexpected internal failure                                         |
+| `503`  | Required service such as mail is unavailable                        |
+
+## Validation errors
+
+Unknown body fields are rejected. A validation failure includes field errors:
+
+```json
+{
+    "type": "http://localhost:3000/api/problems/validation-error",
+    "title": "Request validation failed",
+    "status": 422,
+    "detail": "One or more fields are invalid",
+    "instance": "http://localhost:3000/api/problems/instances/<uuid>",
+    "requestId": "<request-uuid>",
+    "errors": [
+        {
+            "pointer": "/email",
+            "code": "invalid_email",
+            "detail": "email must be an email"
+        }
+    ]
+}
+```
+
+Pointers use JSON Pointer syntax. Stable codes include `invalid_email`,
+`too_short`, `too_long`, `invalid_uuid`, `invalid_choice`, `invalid_format`,
+`invalid_type`, `invalid_date`, `duplicate_items`, and `unknown_field`.
+
+## Pagination
+
+List endpoints use:
+
+| Query field | Default | Constraint                         |
+| ----------- | ------- | ---------------------------------- |
+| `page`      | `1`     | Integer, minimum 1                 |
+| `limit`     | `20`    | Integer, 1 through 100             |
+| `search`    | Not set | String interpreted by the resource |
+
+Paginated responses place items in `data` and page information in `meta`:
+
+```json
+{
+    "success": true,
+    "statusCode": 200,
+    "message": "Users retrieved successfully.",
+    "data": [],
+    "meta": {
+        "page": 1,
+        "limit": 20,
+        "totalItems": 0,
+        "totalPages": 0
+    },
+    "timestamp": "2026-01-01T00:00:00.000Z",
+    "requestId": "<request-uuid>"
+}
+```
+
+## Request correlation
+
+Clients may send `X-Request-Id`. The request-context middleware preserves a
+usable value or generates a UUID. The identifier appears in success envelopes,
+Problem Details, response headers, HTTP completion logs, and RBAC audit records.
+
+Send one from a client:
+
+```bash
+curl http://localhost:3000/api/v1/users/me \
+  --header 'Authorization: Bearer <access-token>' \
+  --header 'X-Request-Id: checkout-2026-0001'
+```
+
+Use the returned request ID when correlating a client failure with server logs.
+
+## Rate limiting
+
+The global throttler uses `THROTTLE_TTL_MS` and `THROTTLE_LIMIT`. Authentication
+routes may be stricter:
+
+| Route               | Limit                      |
+| ------------------- | -------------------------- |
+| Registration        | 5 requests per 60 seconds  |
+| Resend verification | 5 requests per 60 seconds  |
+| Login               | 10 requests per 60 seconds |
+
+Exceeding a limit returns `429 Too Many Requests`.
+
+## CORS and browser requests
+
+CORS:
+
+- Allows origins from the comma-separated `CORS_ORIGINS` value.
+- Allows credentials.
+- Accepts `GET`, `HEAD`, `POST`, `PUT`, `PATCH`, `DELETE`, and `OPTIONS`.
+- Exposes `X-Request-Id`.
+- Caches preflight results for 86,400 seconds.
+
+Browser clients using refresh cookies must set the request credential mode to
+include credentials.
+
+## Content types
+
+JSON request bodies use `application/json`. Normal successful responses use
+JSON, errors use `application/problem+json`, and endpoints returning
+`204 No Content` have no body.

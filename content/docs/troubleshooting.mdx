@@ -1,0 +1,207 @@
+---
+title: Troubleshooting
+description: Diagnose configuration, PostgreSQL, migrations, authentication, CSRF, mail, OpenAPI, logging, and test failures.
+---
+
+# Troubleshooting
+
+Start with the first error emitted by the process. Later connection, dependency,
+or test failures are often consequences of an invalid environment or unapplied
+migration.
+
+## Environment validation fails
+
+Check:
+
+- Required database, JWT, and mail values are present.
+- Both JWT secrets contain at least 32 characters.
+- TTL values use an integer followed by `s`, `m`, `h`, or `d`.
+- `API_PUBLIC_URL` has no credentials, query, or fragment.
+- Production uses an HTTPS public URL and secure cookies.
+- `SameSite=None` is paired with secure cookies.
+
+Run the application again after correcting `.env`; configuration is validated
+at startup.
+
+## PostgreSQL connection fails
+
+Confirm:
+
+1. PostgreSQL is running.
+2. Host, port, database, username, and password in `DATABASE_URL` are correct.
+3. Docker Compose publishes host port `5433` by default.
+4. Native PostgreSQL commonly listens on `5432`.
+5. A host API uses `localhost`; the Compose API uses service name `postgres`.
+6. The database accepts connections from the API network.
+
+For Compose:
+
+```bash
+docker compose ps
+```
+
+Do not infer the active database from `POSTGRES_PORT`; the API connects only
+through `DATABASE_URL`.
+
+## Database TLS fails
+
+When `DATABASE_SSL=true`, the driver verifies the server certificate. Install
+the required certificate authority in the runtime trust store and ensure the
+database hostname matches its certificate. Do not work around the error by
+disabling verification in source code.
+
+## `No changes in database schema were found`
+
+The generator found no difference between entity metadata and the selected
+database. Verify:
+
+- `DATABASE_URL` points to the intended database.
+- Entities use the `*.orm-entity.ts` naming convention.
+- Entities live under a module's
+  `infrastructure/persistence/entities` directory.
+- Decorators or relations actually changed.
+- The schema was not already changed manually.
+
+Create a manual migration for data changes, functions, triggers, partial
+indexes, or SQL not represented by TypeORM:
+
+```bash
+pnpm migration:create \
+  libs/shared/database/src/migrations/add-custom-database-behavior
+```
+
+## `No migrations are pending`
+
+Every discovered migration is already recorded in `typeorm_migrations`:
+
+```bash
+pnpm migration:show
+```
+
+Editing an applied migration does not make it pending because TypeORM does not
+track file checksums. Create a new migration for a database that must be
+preserved, or reset only a disposable development database.
+
+## Migration generation uses the wrong path
+
+Supply a path and migration name:
+
+```bash
+pnpm migration:generate \
+  libs/shared/database/src/migrations/add-user-preferences
+```
+
+Do not pass only the directory and do not use `run` as the positional name.
+Apply generated code separately with `pnpm migration:run`.
+
+## Old tables remain visible
+
+- Refresh the schema tree in the database client.
+- Confirm the GUI and migration CLI use the same host, port, and database.
+- Run `pnpm migration:show`.
+- Remember that entity edits do nothing while `synchronize: false`.
+- Remember that editing an applied migration does not rerun it.
+
+## Login returns `401` or `403`
+
+For `401`:
+
+- Confirm the email and password.
+- Confirm JWT issuer, audience, and secrets are consistent.
+- Replace expired or revoked access tokens.
+- Treat a failed refresh as an ended session.
+
+For `403`:
+
+- Verify the account is active and email verified.
+- Inspect the user's effective permissions.
+- Check whether the endpoint is super-administrator-only.
+- For CSRF-protected routes, validate the cookie and header flow.
+
+Password changes, suspension, deletion, and access changes may invalidate
+previous tokens through the user's authentication version.
+
+## CSRF validation fails
+
+Confirm:
+
+- The browser or HTTP client retained both authentication cookies.
+- The request includes credentials.
+- `X-CSRF-Token` exactly matches the current CSRF cookie or the token returned
+  in the latest login/refresh response.
+- The client replaced its CSRF token after refresh rotation.
+- Cookie path, domain, HTTPS, and `SameSite` rules permit the request.
+- The configured cookie names match the running environment.
+
+Do not reuse the CSRF value from before a successful refresh.
+
+## Cookies are missing in a browser
+
+Check:
+
+- CORS includes the exact frontend origin.
+- The browser request uses credential mode `include`.
+- Production requests use HTTPS.
+- Cross-site deployments use `SameSite=None` and `Secure`.
+- The API hostname and cookie path match the authentication request.
+- A reverse proxy forwards the original protocol correctly and trust-proxy
+  configuration is accurate.
+
+Use the browser network panel to inspect `Set-Cookie` rejection reasons.
+
+## Verification email is not delivered
+
+For local development:
+
+```bash
+docker compose up -d mailpit
+```
+
+Open [http://localhost:8025](http://localhost:8025). A host API uses `MAIL_HOST=localhost`; a
+containerized API uses `MAIL_HOST=mailpit`.
+
+For remote SMTP, verify the host, port, secure mode, credentials, sender, DNS,
+and network egress. An empty `MAIL_USER` intentionally disables SMTP
+authentication.
+
+## Scalar or OpenAPI returns `404`
+
+Set:
+
+```dotenv
+OPENAPI_ENABLED=true
+```
+
+Restart the API, then use:
+
+- [http://localhost:3000/docs](http://localhost:3000/docs)
+- [http://localhost:3000/openapi.json](http://localhost:3000/openapi.json)
+
+These routes are not placed below `/api`.
+
+## Health checks fail
+
+- Liveness failure means the HTTP process is not responding.
+- Readiness database failure means PostgreSQL did not answer within 1.5
+  seconds.
+- Readiness memory failure means heap usage exceeded 512 MiB.
+
+Inspect application logs and PostgreSQL availability before restarting
+repeatedly.
+
+## Logs are missing
+
+File transports are disabled in tests. In other environments, confirm the
+process can create and write `logs/`. Containers run as the `node` user, so a
+mounted directory must have compatible ownership.
+
+Production console logs are JSON. Development console logs are formatted for
+humans. Search rotated files and include hidden rotation audit files when
+diagnosing retention.
+
+## Tests target the wrong database
+
+Set `NODE_ENV=test`, inspect `.env.test`, and verify the database before applying
+migrations. Never run E2E cleanup or migration reverts against shared data.
+
+See [Testing](./testing.mdx) for the intended verification sequence.

@@ -1,0 +1,163 @@
+---
+title: Deployment
+description: Build and deploy the API with validated production configuration, migrations, HTTPS, health checks, and containers.
+---
+
+# Deployment
+
+The deployable unit is one NestJS API process backed by PostgreSQL and an SMTP
+service. The repository includes a production build command, a multi-stage
+Dockerfile, and a development-oriented Compose topology.
+
+## Production prerequisites
+
+Provide:
+
+- Node.js 24 or the included container image.
+- A reachable PostgreSQL database.
+- An SMTP server for verification messages.
+- HTTPS termination before browser clients use authentication cookies.
+- Persistent log collection or a mounted log directory when file logs are
+  retained.
+
+## Required production behavior
+
+The configuration validator refuses to start production when:
+
+- `API_PUBLIC_URL` does not use HTTPS.
+- `AUTH_COOKIE_SECURE` is not `true`.
+- `SameSite=None` is used without secure cookies.
+- Required database, JWT, or mail configuration is absent.
+
+Use distinct, randomly generated access and refresh secrets. Keep secrets in the
+deployment platform, not in the repository or image.
+
+## Build and run with Node.js
+
+```bash
+pnpm install --frozen-lockfile
+pnpm build
+pnpm start:prod
+```
+
+The build output starts from `dist/apps/api/main.js`.
+
+Migrations are not applied by application startup. Run `pnpm migration:show`
+and `pnpm migration:run` in a trusted release or CI environment with full
+project tooling before starting the new application version.
+
+## Container image
+
+The Dockerfile:
+
+1. Uses Node.js 24 and pnpm `10.34.5`.
+2. Installs from the lockfile with a BuildKit cache.
+3. Builds the API.
+4. Prunes development dependencies.
+5. Copies only the package manifest, production dependencies, and `dist`.
+6. Runs as the unprivileged `node` user.
+7. Exposes port `3000`.
+8. Checks `/health/liveness` with Node's built-in `fetch`.
+
+Build the runtime image:
+
+```bash
+docker build --target runtime --tag nestjs-modular-monolith-api .
+```
+
+Run it with a deployment-managed environment:
+
+```bash
+docker run --rm \
+  --env-file .env.production \
+  --publish 3000:3000 \
+  nestjs-modular-monolith-api
+```
+
+Do not copy `.env.production` into the image.
+
+## Docker Compose
+
+The included `compose.yaml` defines:
+
+```mermaid
+flowchart LR
+    Client --> API[API :3000]
+    API --> PostgreSQL[PostgreSQL :5432]
+    API --> Mailpit[Mailpit SMTP :1025]
+    Developer --> MailpitUI[Mailpit UI :8025]
+```
+
+For a local full-stack container run:
+
+```bash
+docker compose up -d --build
+docker compose ps
+```
+
+The API service overrides:
+
+```dotenv
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/nestjs
+MAIL_HOST=mailpit
+```
+
+Compose is suitable as a reproducible local topology. Production platforms
+should provide durable PostgreSQL, secret management, HTTPS, backup policy, and
+central log handling.
+
+## Reverse proxy and CORS
+
+Set:
+
+- `APP_TRUST_PROXY_HOPS` to the exact number of trusted proxy hops.
+- `API_PUBLIC_URL` to the externally visible API prefix.
+- `CORS_ORIGINS` to the exact comma-separated browser origins.
+- `WEB_APP_URL` to the externally visible frontend URL.
+
+Do not use wildcard browser origins with credentialed requests.
+
+## Database TLS
+
+`DATABASE_SSL=true` enables TLS with `rejectUnauthorized: true`. The database
+must present a certificate trusted by the container or host. Do not disable
+certificate validation in application code to accommodate an untrusted
+certificate.
+
+## OpenAPI exposure
+
+`OPENAPI_ENABLED=false` is the schema default. Enable it in production only when
+the Scalar reference and raw OpenAPI document are intended to be public or are
+protected by infrastructure controls.
+
+## Release sequence
+
+1. Validate the deployment environment.
+2. Build and scan the artifact.
+3. Back up the database when a migration has destructive potential.
+4. Inspect and apply pending migrations.
+5. Start the new application version.
+6. Check liveness and readiness.
+7. Exercise login, refresh, and a database-backed API request.
+8. Watch error logs and rollback the application when acceptance checks fail.
+
+Database rollback requires an explicitly safe migration `down()` path; rolling
+back only the application does not reverse schema changes.
+
+## Post-deployment checks
+
+```bash
+curl https://api.example.com/health/liveness
+curl https://api.example.com/health/readiness
+```
+
+Confirm:
+
+- Liveness returns `{"status":"ok"}`.
+- Readiness reports healthy database and memory checks.
+- Cookies include `Secure` and the expected `SameSite` value.
+- CORS permits only expected origins.
+- Request IDs appear in responses and logs.
+- Verification email reaches the configured SMTP service.
+
+Continue with [Operations](./operations.mdx) for runtime behavior.

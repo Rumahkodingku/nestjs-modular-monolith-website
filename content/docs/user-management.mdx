@@ -1,0 +1,171 @@
+---
+title: User Management
+description: Use self-service profiles and permission-protected administrative user lifecycle operations.
+---
+
+# User management
+
+The users module supports self-service account changes and administrative user
+management. All user routes require a bearer access token. Administrative
+routes also require a specific effective permission.
+
+The default base path is `http://localhost:3000/api/v1/users`.
+
+## User states
+
+| State                  | Meaning                                 |
+| ---------------------- | --------------------------------------- |
+| `PENDING_VERIFICATION` | Registered but not yet email verified   |
+| `ACTIVE`               | Allowed to authenticate and use the API |
+| `SUSPENDED`            | Retained but blocked from normal access |
+
+Soft deletion is tracked separately with `deletedAt`. Administrative user
+responses may include deleted records when requested.
+
+## Self-service operations
+
+Self-service routes need only a valid access token:
+
+| Method and path               | Purpose                                                           |
+| ----------------------------- | ----------------------------------------------------------------- |
+| `GET /users/me`               | Return the current profile and effective access                   |
+| `PATCH /users/me`             | Replace the current display name                                  |
+| `POST /users/me/email-change` | Verify the current password and send an email-change verification |
+
+Get the current profile:
+
+```bash
+curl http://localhost:3000/api/v1/users/me \
+  --header 'Authorization: Bearer <access-token>'
+```
+
+Update the display name:
+
+```bash
+curl --request PATCH http://localhost:3000/api/v1/users/me \
+  --header 'Authorization: Bearer <access-token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "displayName": "Updated Name"
+  }'
+```
+
+Request an email change:
+
+```bash
+curl --request POST http://localhost:3000/api/v1/users/me/email-change \
+  --header 'Authorization: Bearer <access-token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "newEmail": "updated@example.com",
+    "currentPassword": "current-password-at-least-12-characters"
+  }'
+```
+
+The email changes only after the recipient submits the verification token
+through `POST /auth/verify-email`.
+
+## Administrative permissions
+
+The default RBAC seed creates:
+
+| Permission      | Administrative capability        |
+| --------------- | -------------------------------- |
+| `users.create`  | Create managed users             |
+| `users.read`    | List and inspect users           |
+| `users.update`  | Update profile, status, or email |
+| `users.delete`  | Soft-delete users                |
+| `users.restore` | Restore soft-deleted users       |
+
+The seeded `ADMIN` role receives all system user permissions. The
+`SUPER_ADMIN` role bypasses individual permission checks. Effective permissions
+can still differ because of per-user overrides.
+
+## Administrative operations
+
+| Method and path                | Permission      | Purpose                                        |
+| ------------------------------ | --------------- | ---------------------------------------------- |
+| `POST /users`                  | `users.create`  | Create an active, email-verified managed user  |
+| `GET /users`                   | `users.read`    | List users with pagination and filters         |
+| `GET /users/:id`               | `users.read`    | Inspect a user by UUID                         |
+| `PATCH /users/:id`             | `users.update`  | Change display name or active/suspended status |
+| `POST /users/:id/email-change` | `users.update`  | Send a managed email-change verification       |
+| `DELETE /users/:id`            | `users.delete`  | Soft-delete an account                         |
+| `POST /users/:id/restore`      | `users.restore` | Restore a soft-deleted account                 |
+
+### Create a managed user
+
+```bash
+curl --request POST http://localhost:3000/api/v1/users \
+  --header 'Authorization: Bearer <access-token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "email": "managed@example.com",
+    "displayName": "Managed User",
+    "password": "managed-password-at-least-12-characters"
+  }'
+```
+
+Managed users start as `ACTIVE` with their initial email marked as verified.
+
+### List users
+
+```bash
+curl \
+  'http://localhost:3000/api/v1/users?page=1&limit=20&search=example&status=ACTIVE&includeDeleted=false' \
+  --header 'Authorization: Bearer <access-token>'
+```
+
+Supported query fields:
+
+| Field            | Behavior                                                   |
+| ---------------- | ---------------------------------------------------------- |
+| `page`           | Page number, default `1`                                   |
+| `limit`          | Items per page, default `20`, maximum `100`                |
+| `search`         | User search text                                           |
+| `roleId`         | Filter by assigned role UUID                               |
+| `status`         | Filter by `PENDING_VERIFICATION`, `ACTIVE`, or `SUSPENDED` |
+| `includeDeleted` | Include soft-deleted users when `true`                     |
+
+### Update status or profile
+
+```bash
+curl --request PATCH http://localhost:3000/api/v1/users/<user-uuid> \
+  --header 'Authorization: Bearer <access-token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "displayName": "Managed Account",
+    "status": "SUSPENDED"
+  }'
+```
+
+Only `ACTIVE` and `SUSPENDED` are accepted as administrative status updates.
+Suspension invalidates existing access by incrementing the user's
+authentication version.
+
+### Soft-delete and restore
+
+```bash
+curl --request DELETE http://localhost:3000/api/v1/users/<user-uuid> \
+  --header 'Authorization: Bearer <access-token>'
+
+curl --request POST http://localhost:3000/api/v1/users/<user-uuid>/restore \
+  --header 'Authorization: Bearer <access-token>'
+```
+
+Deletion is soft and invalidates existing authentication. Restoration retains
+the account record and increments its authentication version again.
+
+## Administrative safeguards
+
+- Administrators cannot delete their own account.
+- Managed email changes for the acting administrator must use the self-service
+  endpoint.
+- RBAC policy prevents callers from managing users whose protected access is
+  outside their authority.
+- The final active super administrator cannot be removed through an access
+  replacement.
+- Duplicate current or target email addresses return a conflict.
+
+Use [Role-Based Access Control](./rbac.mdx) to manage assignments and
+[Authentication](./authentication.mdx) for verification and session behavior.

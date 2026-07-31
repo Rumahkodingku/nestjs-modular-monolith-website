@@ -1,0 +1,158 @@
+---
+title: Operations
+description: Operate health checks, structured logs, request correlation, mail delivery, throttling, and runtime services.
+---
+
+# Operations
+
+The API exposes public health endpoints and writes structured request and error
+information through Winston.
+
+## Health checks
+
+Health routes are version-neutral and excluded from the global `/api` prefix.
+
+### Liveness
+
+```text
+GET /health/liveness
+```
+
+```json
+{
+    "status": "ok"
+}
+```
+
+Liveness verifies that the Node.js process can answer HTTP requests. The
+container health check calls this endpoint every 30 seconds after a 20-second
+start period.
+
+### Readiness
+
+```text
+GET /health/readiness
+```
+
+Readiness checks:
+
+- PostgreSQL responsiveness with a 1.5-second timeout.
+- JavaScript heap usage against a 512 MiB threshold.
+
+Use readiness to decide whether an instance should receive traffic. Do not use
+liveness for dependency health or a database outage may trigger unnecessary
+process restarts.
+
+## Structured logging
+
+Winston writes:
+
+- Human-readable colored console output outside production.
+- JSON console output in production.
+- JSON combined logs outside tests.
+- JSON error-only logs outside tests.
+
+File locations:
+
+```text
+logs/combined-YYYY-MM-DD.log
+logs/error-YYYY-MM-DD.log
+```
+
+Files rotate at 10 MiB, are compressed, and are retained for seven days.
+Rotation state is stored in hidden audit files within `logs/`.
+
+Set verbosity with `LOG_LEVEL`. Production normally uses `info`; temporarily
+increase verbosity only when the additional data is operationally safe.
+
+## HTTP completion logs
+
+Every completed request records:
+
+- Event name `http_request_completed`.
+- HTTP method and path.
+- Response status.
+- Duration in milliseconds.
+
+Responses below `400` log at normal level, `4xx` responses log as warnings, and
+`5xx` responses log as errors. Unexpected exceptions are also logged by the
+Problem Details filter without exposing internal details to clients.
+
+## Request correlation
+
+Clients may provide `X-Request-Id` containing 8 to 128 characters from:
+
+```text
+A-Z a-z 0-9 . _ : -
+```
+
+Invalid or missing values are replaced with a UUID. The request ID is returned
+in the response header and appears in success responses, errors, request
+context, and RBAC audit records.
+
+Search logs with the identifier supplied by the client:
+
+```bash
+rg 'checkout-2026-0001' logs
+```
+
+## Mail delivery
+
+The mail module uses SMTP and Handlebars templates. It omits SMTP
+authentication when `MAIL_USER` is empty.
+
+For development:
+
+```bash
+docker compose up -d mailpit
+```
+
+- SMTP: `localhost:1025`
+- Browser interface: [http://localhost:8025](http://localhost:8025)
+
+Verification delivery failures return a service-unavailable error for flows
+that require a message. Confirm the SMTP host from the API's network namespace:
+the containerized API uses `mailpit`, while a host process uses `localhost`.
+
+## Rate limiting
+
+The global window and limit come from:
+
+```dotenv
+THROTTLE_TTL_MS=60000
+THROTTLE_LIMIT=100
+```
+
+Registration and verification resend use five requests per minute; login uses
+ten. A rejected request returns `429 Too Many Requests`.
+
+Tune limits according to observed traffic and proxy behavior. Configure
+`APP_TRUST_PROXY_HOPS` correctly so client addressing cannot be spoofed through
+untrusted forwarding headers.
+
+## Runtime files
+
+| Path       | Purpose                                                     |
+| ---------- | ----------------------------------------------------------- |
+| `logs/`    | Rotated application logs                                    |
+| `uploads/` | Runtime upload data when upload workflows use local storage |
+| `dist/`    | Production build output                                     |
+
+The repository ignores logs, uploads, environment files, coverage, and build
+output. Mount persistent storage or ship logs to an external collector when the
+deployment requires retention across container replacement.
+
+## Operational checklist
+
+- Monitor readiness failures separately from liveness failures.
+- Alert on sustained `5xx` rates and repeated authentication failures.
+- Correlate client incidents with `X-Request-Id`.
+- Monitor PostgreSQL connections relative to `DATABASE_POOL_SIZE`.
+- Confirm log retention and disk usage.
+- Test SMTP delivery after credential or network changes.
+- Back up PostgreSQL and test restoration.
+- Review pending migrations before every deployment.
+- Keep OpenAPI exposure intentional.
+
+See [Deployment](./deployment.mdx) for release checks and
+[Troubleshooting](./troubleshooting.mdx) for failure diagnosis.
