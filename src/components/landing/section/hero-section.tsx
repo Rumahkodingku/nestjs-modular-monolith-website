@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { githubUrl } from "@/lib/shared";
-import { LandingIcon } from "./landing-icon";
+import { LandingIcon } from "../landing-icon";
 
 export function HeroSection() {
     return (
@@ -16,8 +16,8 @@ export function HeroSection() {
                         Build the product, not the backend foundation
                     </h1>
                     <p className="landing-enter landing-enter-delay-2 mt-7 max-w-[38rem] text-base leading-7 text-ink-secondary sm:text-lg sm:leading-8">
-                        A production-minded NestJS modular monolith with security, data, documentation, and
-                        operational building blocks already connected.
+                        A production-minded NestJS modular monolith with security, data, documentation, and operational
+                        building blocks already connected.
                     </p>
                     <div className="landing-enter landing-enter-delay-3 mt-9 flex flex-col gap-3 min-[420px]:flex-row">
                         <Link className="landing-button landing-button-primary" href="/docs">

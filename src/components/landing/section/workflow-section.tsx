@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { LandingIcon } from "./landing-icon";
+import { LandingIcon } from "../landing-icon";
 
 const easeOut = [0.23, 1, 0.32, 1] as const;
 

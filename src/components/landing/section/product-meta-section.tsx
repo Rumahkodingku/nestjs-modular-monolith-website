@@ -1,4 +1,4 @@
-import { LandingIcon } from "./landing-icon";
+import { LandingIcon } from "../landing-icon";
 
 const items = [
     { label: "Architecture", value: "Modular monolith", icon: "ph:cube" },

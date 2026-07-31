@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { LandingIcon } from "./landing-icon";
-import { Reveal } from "./landing-motion";
+import { LandingIcon } from "../landing-icon";
+import { Reveal } from "../landing-motion";
 
 const modules = [
     { label: "Authentication", icon: "ph:key" },
@@ -77,7 +77,7 @@ export function ArchitectureSection() {
                     <Reveal className="relative overflow-hidden rounded-md border border-line bg-code" delay={0.08}>
                         <Image
                             alt="NestJS modular monolith source tree and authentication use case in the editor"
-                            className="aspect-video h-full min-h-[24rem] w-full object-cover lg:min-h-[38rem]"
+                            className="aspect-video h-full min-h-96 w-full object-cover lg:min-h-152"
                             height={1080}
                             sizes="(min-width: 1024px) 60vw, 100vw"
                             src="/images/images-3.webp"

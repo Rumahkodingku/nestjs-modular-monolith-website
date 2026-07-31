@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { githubUrl } from "@/lib/shared";
-import { LandingIcon } from "./landing-icon";
-import { Reveal } from "./landing-motion";
+import { LandingIcon } from "../landing-icon";
+import { Reveal } from "../landing-motion";
 
 export function FinalCtaSection() {
     return (

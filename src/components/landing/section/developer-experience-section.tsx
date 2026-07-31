@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { LandingIcon } from "./landing-icon";
-import { Reveal } from "./landing-motion";
+import { LandingIcon } from "../landing-icon";
+import { Reveal } from "../landing-motion";
 
 const capabilities = [
     {

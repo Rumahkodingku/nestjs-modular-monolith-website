@@ -1,5 +1,5 @@
-import { LandingIcon } from "./landing-icon";
-import { Reveal } from "./landing-motion";
+import { LandingIcon } from "../landing-icon";
+import { Reveal } from "../landing-motion";
 
 type FeatureCardProps = {
     icon: string;
@@ -34,13 +34,10 @@ function FeatureCard({ icon, title, description, items, size = "standard", tone 
     return (
         <Reveal className={`${featureSizeClasses[size]} h-full`}>
             <article
-                className={`landing-feature-card flex h-full min-h-[22rem] flex-col justify-between rounded-md border border-line p-6 sm:p-8 ${featureToneClasses[tone]}`}
+                className={`landing-feature-card flex h-full min-h-88 flex-col justify-between rounded-md border border-line p-6 sm:p-8 ${featureToneClasses[tone]}`}
             >
                 <div>
-                    <LandingIcon
-                        className={`size-8 ${tone === "accent" ? "text-white" : "text-brand"}`}
-                        icon={icon}
-                    />
+                    <LandingIcon className={`size-8 ${tone === "accent" ? "text-white" : "text-brand"}`} icon={icon} />
                     <h3 className="mt-8 max-w-xl text-2xl font-semibold tracking-[-0.035em] sm:text-3xl">{title}</h3>
                     <p className={`mt-4 max-w-2xl text-sm leading-7 sm:text-base ${mutedClass}`}>{description}</p>
                 </div>

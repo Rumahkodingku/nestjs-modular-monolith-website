@@ -43,7 +43,7 @@ export function LandingNavigation() {
 
     return (
         <header className="landing-nav">
-            <div className="site-container flex h-[4.5rem] items-center justify-between gap-4">
+            <div className="site-container flex h-18 items-center justify-between gap-4">
                 <Link
                     aria-label={`${appName} home`}
                     className="landing-brand min-w-0"
