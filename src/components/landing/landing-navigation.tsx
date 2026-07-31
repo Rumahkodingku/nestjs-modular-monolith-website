@@ -5,6 +5,7 @@ import { useState, useSyncExternalStore } from "react";
 import { useTheme } from "fumadocs-ui/provider/base";
 import { appName, githubUrl, proRoute } from "@/lib/shared";
 import { LandingIcon } from "./landing-icon";
+import { NestJsIcon } from "../ui/icon";
 
 const navigation = [
     { href: "/#features", label: "Features" },
@@ -54,8 +55,8 @@ export function LandingNavigation() {
                         href="/"
                         onClick={() => setOpen(false)}
                     >
-                        <span className="landing-brand-mark" aria-hidden="true">
-                            <LandingIcon className="size-5" icon="ph:cube" />
+                        <span aria-hidden="true" className="px-3">
+                            <NestJsIcon className="size-5" />
                         </span>
                         <span className="min-w-0 leading-none">
                             <span className="block truncate text-[0.8125rem] font-semibold tracking-[-0.02em] sm:text-sm">

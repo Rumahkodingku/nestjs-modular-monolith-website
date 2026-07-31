@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { appName, githubUrl, proRoute } from "@/lib/shared";
 import { LandingIcon } from "./landing-icon";
+import { NestJsIcon } from "../ui/icon";
 
 export function LandingFooter() {
     return (
         <footer className="border-t border-line py-8">
             <div className="site-container flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-3">
-                    <span className="landing-brand-mark" aria-hidden="true">
-                        <LandingIcon className="size-4" icon="ph:cube" />
+                    <span className="px-3" aria-hidden="true">
+                        <NestJsIcon className="size-5" />
                     </span>
                     <div>
                         <p className="text-sm font-semibold">{appName}</p>
