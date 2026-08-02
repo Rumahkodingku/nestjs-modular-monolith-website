@@ -88,7 +88,7 @@ export function LandingNavigation() {
                         </Link>
                         <ThemeToggle />
                         <Link className="landing-pro-button landing-button landing-button-primary" href={proRoute}>
-                            View Pro
+                            Explore Pro
                             <LandingIcon className="size-4" icon="ph:arrow-right" />
                         </Link>
                         <button
@@ -137,7 +137,7 @@ export function LandingNavigation() {
                                 href={proRoute}
                                 onClick={() => setOpen(false)}
                             >
-                                Buy Pro
+                                Get Pro
                                 <LandingIcon className="size-4" icon="ph:arrow-up-right" />
                             </Link>
                             <Link

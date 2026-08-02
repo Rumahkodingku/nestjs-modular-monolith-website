@@ -9,31 +9,27 @@ const easeOut = [0.23, 1, 0.32, 1] as const;
 
 const steps = [
     {
-        title: "Identity and access",
+        title: "Day 1: Users are real",
         description:
-            "Build account and authorization flows on top of explicit contracts instead of reconnecting the same security primitives.",
+            "Auth, sessions, and the user lifecycle are already wired — so the first request you send actually logs someone in, verifies an email, or manages a role.",
         icon: "ph:fingerprint",
         image: "/images/images-4.webp",
         imageAlt: "API client showing structured validation errors for an invalid registration request",
         tasks: [
-            "Register a user and deliver an email-verification link.",
-            "Verify the account, log in, rotate tokens, and manage active sessions.",
-            "Update a profile or request an authenticated email change.",
-            "Create, suspend, soft-delete, restore, and inspect managed users.",
+            "Register, verify, and log in users on day one — no auth wiring needed.",
+            "Manage sessions, profile updates, and email changes through tested flows.",
         ],
     },
     {
-        title: "Authorization and operations",
+        title: "Day 2: Ship to prod",
         description:
-            "Carry the same request context through permissions, audit records, readiness checks, CI, and the production image.",
+            "Permissions, audit trails, health checks, CI, and the Docker image follow the same path from local to production — nothing to reconfigure.",
         icon: "ph:git-branch",
         image: "/images/images-5.webp",
         imageAlt: "API client showing a successful typed user registration response",
         tasks: [
-            "Create roles and permissions, assign access, and calculate effective permissions.",
-            "Preserve RBAC changes in an audit log associated with the request ID.",
-            "Check process, database, and heap readiness.",
-            "Build and run the same application in development, CI, and containers.",
+            "Roles, permissions, and audit logs ship modeled and tested.",
+            "Health checks, containers, and CI pass the same way locally and in production.",
         ],
     },
 ];
@@ -59,10 +55,10 @@ export function WorkflowSection() {
         <section className="section border-y border-line" id="workflows" ref={containerRef}>
             <div className="site-container">
                 <div className="max-w-3xl">
-                    <h2 className="landing-section-title">One foundation, complete workflows</h2>
+                    <h2 className="landing-section-title">From <code>git clone</code> to a live API</h2>
                     <p className="landing-section-copy mt-5">
-                        Follow identity and access changes from the first request through audit, health checks, CI, and
-                        containers.
+                        Two phases, no plumbing in between. Identity on day one, production on day two — that&apos;s the
+                        gap this starter closes.
                     </p>
                 </div>
 

@@ -1,17 +1,17 @@
 import { LandingIcon } from "../landing-icon";
 
 const items = [
-    { label: "Architecture", value: "Modular monolith", icon: "ph:cube" },
-    { label: "Delivery", value: "One deployable app", icon: "ph:package" },
-    { label: "Security", value: "JWT and RBAC", icon: "ph:shield-check" },
-    { label: "Persistence", value: "PostgreSQL 17", icon: "ph:database" },
-    { label: "Runtime", value: "Node.js and Docker", icon: "ph:package" },
-    { label: "Quality", value: "Tested in CI", icon: "ph:check-square" },
+    { label: "Weeks saved", value: "~40h boilerplate eliminated", icon: "ph:clock" },
+    { label: "From clone to running", value: "Under 10 minutes", icon: "ph:rocket-launch" },
+    { label: "Auth & RBAC", value: "Ready out of the box", icon: "ph:shield-check" },
+    { label: "Production patterns", value: "Not just a demo", icon: "ph:check-square" },
+    { label: "Open core", value: "MIT-licensed foundation", icon: "ph:code" },
+    { label: "Upgradable", value: "Pro adds the hard parts", icon: "ph:package" },
 ];
 
 export function ProductMetaSection() {
     return (
-        <section aria-label="Product metadata" className="border-b border-line">
+        <section aria-label="Why teams reach for this" className="border-b border-line">
             <div className="site-container">
                 <div className="grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                     {items.map((item) => (

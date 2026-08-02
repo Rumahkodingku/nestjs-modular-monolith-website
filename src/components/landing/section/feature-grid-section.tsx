@@ -61,51 +61,52 @@ export function FeatureGridSection() {
         <section className="section" id="features">
             <div className="site-container">
                 <Reveal className="max-w-3xl">
-                    <h2 className="landing-section-title">Everything needed for a serious API foundation</h2>
+                    <h2 className="landing-section-title">What you stop building yourself</h2>
                     <p className="landing-section-copy mt-5">
-                        Start with production-minded defaults, then adapt only the parts your product actually needs.
+                        Every card below is hours you won&apos;t spend wiring boilerplate — so your sprint zero becomes a
+                        sprint one.
                     </p>
                 </Reveal>
                 <div className="mt-14 grid auto-rows-fr grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-12">
                     <FeatureCard
-                        description="JWT access tokens, rotating refresh tokens, HTTP-only cookies, CSRF protection, password changes, active-session listing, and session revocation."
+                        description="Stop re-implementing login on every project. Token rotation, CSRF, and session control ship wired and tested."
                         icon="ph:key"
-                        items={["Access token", "Refresh rotation", "HTTP-only cookies", "CSRF"]}
+                        items={["Access + refresh", "HTTP-only cookies", "CSRF"]}
                         size="wide"
                         title="Authentication and sessions"
                     />
                     <FeatureCard
-                        description="Public registration, email verification, profile updates, managed user creation, suspension, soft deletion, restoration, and administrative email changes."
+                        description="Onboard users on day one, not week three. Registration, email verification, suspension, and restoration are all here."
                         icon="ph:users-three"
-                        items={["Registration", "Verification", "Suspension", "Restoration"]}
+                        items={["Registration", "Verification", "Restoration"]}
                         title="Complete user lifecycle"
                     />
                     <FeatureCard
-                        description="System and custom roles, granular permissions, per-user overrides, super-administrator safeguards, and auditable changes."
+                        description="Skip days of RBAC design. Roles, permissions, per-user overrides, and an audit log come modeled and tested."
                         icon="ph:shield-star"
-                        items={["Roles", "Permissions", "Allow or deny", "Audit log"]}
+                        items={["Roles", "Permissions", "Audit log"]}
                         title="Role-based access control"
                         tone="accent"
                     />
                     <FeatureCard
-                        description="TypeORM entities, explicit migrations, connection pooling, optional verified SSL, PostgreSQL-specific schemas, and safe migration conventions."
+                        description="TypeORM entities, explicit migrations, connection pooling, and verified SSL — so you inherit safe persistence without piecing it together."
                         icon="ph:database"
-                        items={["TypeORM", "Explicit migrations", "Pooling", "Verified SSL"]}
+                        items={["TypeORM", "Migrations", "Pooling"]}
                         size="wide"
                         title="PostgreSQL by default"
                     />
                     <FeatureCard
-                        description="OpenAPI metadata is generated from the application and rendered with Scalar. Success responses, errors, authentication, and operation descriptions share consistent contracts."
+                        description="OpenAPI docs are generated, not written. Clients get consistent contracts for success, errors, and auth — rendered in Scalar on day zero."
                         icon="ph:file-code"
-                        items={["OpenAPI", "Swagger", "Scalar", "Problem Details"]}
+                        items={["OpenAPI", "Scalar", "Problem Details"]}
                         size="wide"
                         title="Discoverable API contracts"
                         tone="code"
                     />
                     <FeatureCard
-                        description="Structured Winston logs, correlation IDs, request-duration logging, daily rotation, liveness checks, and database and memory readiness checks."
+                        description="Correlation IDs, structured Winston logs, daily rotation, and health checks ship ready — so debugging starts on day one, not when something breaks."
                         icon="ph:activity"
-                        items={["Correlation IDs", "Winston", "Liveness", "Readiness"]}
+                        items={["Correlation IDs", "Winston", "Health checks"]}
                         title="Operational visibility"
                     />
                 </div>

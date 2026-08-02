@@ -18,10 +18,10 @@ export function ArchitectureSection() {
         <section className="section border-y border-line bg-surface" id="architecture">
             <div className="site-container">
                 <Reveal className="max-w-3xl">
-                    <h2 className="landing-section-title">Start with one deployable application</h2>
+                    <h2 className="landing-section-title">Skip the architecture debate</h2>
                     <p className="landing-section-copy mt-5">
-                        Keep the speed of one NestJS application while maintaining explicit boundaries between
-                        authentication, users, RBAC, and shared infrastructure.
+                        Modular-monolith boundaries are already drawn — auth, users, RBAC, and infra live in their own
+                        modules. You inherit the decisions, not the meetings.
                     </p>
                 </Reveal>
 
@@ -64,12 +64,10 @@ export function ArchitectureSection() {
                         </div>
 
                         <p className="mt-8 text-sm leading-7 text-ink-secondary">
-                            The application layer owns use cases, infrastructure implements persistence and external
-                            services, and presentation exposes HTTP contracts. Cross-module calls use narrow public
-                            services and ports.
+                            Clear boundaries now, microservices later — only if you ever need them.
                         </p>
                         <Link className="landing-text-link mt-6" href="/docs/architecture">
-                            Explore the architecture
+                            See how it&apos;s structured
                             <LandingIcon className="size-4" icon="ph:arrow-right" />
                         </Link>
                     </Reveal>

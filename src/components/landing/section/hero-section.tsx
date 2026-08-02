@@ -13,15 +13,15 @@ export function HeroSection() {
                         NestJS Modular Monolith Starter Kit
                     </p>
                     <h1 className="landing-enter landing-enter-delay-1 mt-5 text-[clamp(3rem,5vw,4.75rem)] font-medium leading-[0.94] tracking-[-0.065em]">
-                        Build the product, not the backend foundation
+                        Skip the backend boilerplate. Ship the product.
                     </h1>
                     <p className="landing-enter landing-enter-delay-2 mt-7 max-w-152 text-base leading-7 text-ink-secondary sm:text-lg sm:leading-8">
-                        A production-minded NestJS modular monolith with security, data, documentation, and operational
-                        building blocks already connected.
+                        Starting a NestJS backend from scratch costs weeks of wiring auth, RBAC, database, and ops. This
+                        starter hands you the foundation so your first commit is product work, not plumbing.
                     </p>
                     <div className="landing-enter landing-enter-delay-3 mt-9 flex flex-col gap-3 min-[420px]:flex-row">
                         <Link className="landing-button landing-button-primary" href={proRoute}>
-                            Buy Pro Product
+                            Get the Pro Starter
                             <LandingIcon className="size-4" icon="ph:arrow-right" />
                         </Link>
                         <Link
@@ -31,9 +31,12 @@ export function HeroSection() {
                             target="_blank"
                         >
                             <LandingIcon className="size-4" icon="ph:github-logo" />
-                            Get Free Product
+                            Try the Free Edition
                         </Link>
                     </div>
+                    <p className="landing-enter landing-enter-delay-3 mt-4 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-ink-muted">
+                        Open source core &middot; Production-tested &middot; Ready in minutes
+                    </p>
                 </div>
 
                 <div className="landing-enter landing-enter-delay-2 relative lg:mr-[-7vw]">

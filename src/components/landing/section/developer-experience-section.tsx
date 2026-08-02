@@ -5,25 +5,26 @@ import { Reveal } from "../landing-motion";
 const capabilities = [
     {
         title: "Email delivery",
-        description: "SMTP delivery, Handlebars templates, and Mailpit support local verification workflows.",
+        description:
+            "SMTP, Handlebars templates, and a local Mailpit container mean you verify emails the same way locally and in production.",
         icon: "ph:envelope",
     },
     {
         title: "Consistent request handling",
         description:
-            "Validation, CORS, Helmet, rate limiting, serialization, URI versioning, and Problem Details are wired globally.",
+            "No more dropping CORS or Helmet at the last minute — validation, rate limiting, serialization, and Problem Details are the default, not an afterthought.",
         icon: "ph:arrows-left-right",
     },
     {
-        title: "Tested workflows",
+        title: "Tested from the start",
         description:
-            "Jest, Supertest, Testcontainers, migrations, linting, formatting, type checking, and production builds run in CI.",
+            "Jest, Supertest, and Testcontainers run against your real database in CI — lint, type-check, and build pass before you merge.",
         icon: "ph:test-tube",
     },
     {
-        title: "Container-ready development",
+        title: "Container-ready",
         description:
-            "A multi-stage Dockerfile and Compose services provide the same path from local development to production.",
+            "A multi-stage Dockerfile and Compose services give you the same image from local dev to production. There is no &quot;works on my machine.&quot;",
         icon: "ph:package",
     },
 ];
@@ -31,18 +32,12 @@ const capabilities = [
 const stack = [
     { layer: "API", technology: "NestJS 11, Express, TypeScript" },
     { layer: "Security", technology: "Passport, JWT, Argon2, Helmet, CSRF" },
-    { layer: "Persistence", technology: "PostgreSQL 17, TypeORM migrations" },
-    { layer: "Documentation", technology: "OpenAPI, Swagger, Scalar" },
-    { layer: "Messaging", technology: "SMTP, Nodemailer, Handlebars, Mailpit" },
-    { layer: "Observability", technology: "Winston, daily rotation, Terminus" },
-    { layer: "Quality", technology: "Jest, Supertest, Testcontainers, ESLint" },
-    { layer: "Runtime", technology: "Node.js 24, pnpm, Docker" },
+    { layer: "Persistence", technology: "PostgreSQL 17, TypeORM, migrations" },
+    { layer: "Quality", technology: "Jest, Supertest, CI, Docker" },
 ];
 
-const command = `pnpm install --frozen-lockfile
-cp .env.example .env
-docker compose up -d postgres mailpit
-pnpm migration:run
+const command = `git clone <repo-url>
+pnpm install
 pnpm start:dev`;
 
 export function DeveloperExperienceSection() {
@@ -50,10 +45,9 @@ export function DeveloperExperienceSection() {
         <section className="section" id="developer-experience">
             <div className="site-container">
                 <Reveal className="max-w-3xl">
-                    <h2 className="landing-section-title">A workflow built for shipping</h2>
+                    <h2 className="landing-section-title">Set up once, ship every day</h2>
                     <p className="landing-section-copy mt-5">
-                        Security, API contracts, local infrastructure, and quality checks follow the same explicit
-                        conventions.
+                        Same conventions across security, contracts, infra, and CI — so every new feature is just code.
                     </p>
                 </Reveal>
 
@@ -94,15 +88,15 @@ export function DeveloperExperienceSection() {
                             <code>{command}</code>
                         </pre>
                         <p className="border-t border-white/10 px-5 py-5 text-xs leading-6 text-white/55 sm:px-7">
-                            Use postgresql://postgres:postgres@localhost:5433/nestjs for DATABASE_URL. The API runs at
-                            /api/v1 and Scalar at /docs.
+                            Three commands from clone to a running API. The full setup guide covers databases, Docker, and
+                            environment configuration.
                         </p>
                     </Reveal>
                 </div>
 
                 <Reveal className="mt-16">
                     <h3 className="font-mono text-xs uppercase tracking-[0.16em] text-ink-muted">
-                        Included technology
+                        Core technology highlights
                     </h3>
                     <dl className="mt-6 grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
                         {stack.map((item) => (
@@ -115,7 +109,7 @@ export function DeveloperExperienceSection() {
                         ))}
                     </dl>
                     <Link className="landing-text-link mt-10" href="/docs/getting-started">
-                        Follow the complete setup guide
+                        Read the setup guide
                         <LandingIcon className="size-4" icon="ph:arrow-right" />
                     </Link>
                 </Reveal>
