@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { appName, githubUrl, proRoute } from "@/lib/shared";
+import { appName, freeRoute, githubUrl, proRoute } from "@/lib/shared";
 import { LandingIcon } from "./landing-icon";
 import { NestJsIcon } from "../ui/icon";
 
@@ -21,6 +21,9 @@ export function LandingFooter() {
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-ink-secondary">
                     <Link className="landing-footer-link" href="/docs">
                         Documentation
+                    </Link>
+                    <Link className="landing-footer-link" href={freeRoute}>
+                        Free
                     </Link>
                     <Link className="landing-footer-link" href={proRoute}>
                         Pro

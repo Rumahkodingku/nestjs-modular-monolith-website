@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
 import { useTheme } from "fumadocs-ui/provider/base";
-import { appName, githubUrl, proRoute } from "@/lib/shared";
+import { appName, freeRoute, githubUrl, proRoute } from "@/lib/shared";
 import { LandingIcon } from "./landing-icon";
 import { NestJsIcon } from "../ui/icon";
 
@@ -87,8 +87,12 @@ export function LandingNavigation() {
                             <LandingIcon className="size-5" icon="ph:github-logo" />
                         </Link>
                         <ThemeToggle />
+                        <Link className="landing-pro-button landing-button landing-button-secondary" href={freeRoute}>
+                            Explore Free Plan
+                            <LandingIcon className="size-4" icon="ph:arrow-right" />
+                        </Link>
                         <Link className="landing-pro-button landing-button landing-button-primary" href={proRoute}>
-                            Explore Pro
+                            Explore Pro Plan
                             <LandingIcon className="size-4" icon="ph:arrow-right" />
                         </Link>
                         <button
@@ -130,6 +134,10 @@ export function LandingNavigation() {
                             ))}
                             <Link className="landing-mobile-link" href="/docs" onClick={() => setOpen(false)}>
                                 Documentation
+                                <LandingIcon className="size-4" icon="ph:arrow-right" />
+                            </Link>
+                            <Link className="landing-mobile-link" href={freeRoute} onClick={() => setOpen(false)}>
+                                Free
                                 <LandingIcon className="size-4" icon="ph:arrow-right" />
                             </Link>
                             <Link
