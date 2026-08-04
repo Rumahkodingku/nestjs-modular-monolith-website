@@ -1,16 +1,18 @@
-import Image from "next/image";
 import Link from "next/link";
 import { LandingIcon } from "../landing-icon";
 import { Reveal } from "../landing-motion";
 
-const modules = [
-    { label: "Authentication", icon: "ph:key" },
-    { label: "Users", icon: "ph:users-three" },
-    { label: "RBAC", icon: "ph:shield-check" },
+const appModules = [
+    { label: "Authentication", icon: "ph:key", description: "JWT, access/refresh tokens, CSRF" },
+    { label: "Users", icon: "ph:users-three", description: "Registration, verification, lifecycle" },
+    { label: "RBAC", icon: "ph:shield-check", description: "Roles, permissions, audit log" },
+    { label: "Health", icon: "ph:heartbeat", description: "Readiness probes, monitoring" },
+];
+
+const infraModules = [
     { label: "PostgreSQL", icon: "ph:database" },
     { label: "SMTP", icon: "ph:envelope" },
     { label: "Logs", icon: "ph:file-text" },
-    { label: "Health", icon: "ph:heartbeat" },
 ];
 
 export function ArchitectureSection() {
@@ -25,64 +27,68 @@ export function ArchitectureSection() {
                     </p>
                 </Reveal>
 
-                <div className="mt-14 grid items-start gap-5 lg:grid-cols-[minmax(20rem,0.72fr)_minmax(0,1.28fr)]">
-                    <Reveal className="rounded-md border border-line bg-canvas p-5 sm:p-7">
+                <Reveal className="mt-14">
+                    <div className="relative overflow-hidden rounded-md border border-line bg-canvas px-5 py-10 sm:px-12 sm:py-14">
+                        <div aria-hidden="true" className="architecture-v2-deco left-4 top-4 sm:left-6 sm:top-5">
+                            <span className="text-[clamp(3rem,7vw,5rem)] font-mono font-bold text-brand/6">{'{'}</span>
+                        </div>
                         <div
-                            aria-label="Architecture flow from the API client through the NestJS API to application modules and infrastructure"
-                            className="grid gap-4"
-                            role="img"
+                            aria-hidden="true"
+                            className="architecture-v2-deco bottom-4 right-4 sm:bottom-5 sm:right-6"
                         >
-                            <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
-                                <div className="architecture-node">
-                                    <LandingIcon className="size-5 text-ink-muted" icon="ph:terminal-window" />
-                                    <span>API client</span>
-                                </div>
-                                <LandingIcon className="size-4 text-brand" icon="ph:arrow-right" />
-                                <div className="architecture-node border-brand bg-brand text-brand-foreground">
-                                    <LandingIcon className="size-5" icon="ph:cube" />
-                                    <span>NestJS API</span>
-                                </div>
-                            </div>
+                            <span className="text-[clamp(2.5rem,5vw,4rem)] font-mono font-bold text-brand/6">{'}'}</span>
+                        </div>
 
-                            <div className="grid grid-cols-3 gap-2">
-                                {modules.slice(0, 3).map((module) => (
-                                    <div className="architecture-node flex-col text-center" key={module.label}>
-                                        <LandingIcon className="size-5 text-brand" icon={module.icon} />
-                                        <span>{module.label}</span>
-                                    </div>
-                                ))}
+                        <div className="relative z-1 flex flex-wrap items-center justify-center gap-2 min-[480px]:gap-3">
+                            <div className="architecture-v2-entry-node">
+                                <LandingIcon className="size-4 text-ink-muted" icon="ph:terminal-window" />
+                                <span>API Client</span>
                             </div>
-
-                            <div className="grid grid-cols-2 gap-2">
-                                {modules.slice(3).map((module) => (
-                                    <div className="architecture-node" key={module.label}>
-                                        <LandingIcon className="size-5 text-ink-muted" icon={module.icon} />
-                                        <span>{module.label}</span>
-                                    </div>
-                                ))}
+                            <span className="architecture-v2-flow-arrow">
+                                <LandingIcon className="size-4" icon="ph:arrow-right" />
+                            </span>
+                            <div className="architecture-v2-entry-node" data-accent="true">
+                                <LandingIcon className="size-4" icon="ph:cube" />
+                                <span>NestJS API</span>
                             </div>
                         </div>
 
-                        <p className="mt-8 text-sm leading-7 text-ink-secondary">
-                            Clear boundaries now, microservices later — only if you ever need them.
-                        </p>
-                        <Link className="landing-text-link mt-6" href="/docs/architecture">
-                            See how it&apos;s structured
-                            <LandingIcon className="size-4" icon="ph:arrow-right" />
-                        </Link>
-                    </Reveal>
+                        <div className="architecture-v2-connector relative z-1" />
 
-                    <Reveal className="relative overflow-hidden rounded-md border border-line bg-code" delay={0.08}>
-                        <Image
-                            alt="NestJS modular monolith source tree and authentication use case in the editor"
-                            className="aspect-video h-full min-h-96 w-full object-cover lg:min-h-152"
-                            height={1080}
-                            sizes="(min-width: 1024px) 60vw, 100vw"
-                            src="/images/images-3.webp"
-                            width={1920}
-                        />
-                    </Reveal>
-                </div>
+                        <div className="relative z-1 grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
+                            {appModules.map((mod) => (
+                                <div className="architecture-v2-module-card" key={mod.label}>
+                                    <span className="architecture-v2-module-icon">
+                                        <LandingIcon className="size-4" icon={mod.icon} />
+                                    </span>
+                                    <span className="architecture-v2-module-label">{mod.label}</span>
+                                    <span className="architecture-v2-module-desc">{mod.description}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="architecture-v2-connector relative z-1" />
+
+                        <div className="relative z-1 flex flex-wrap items-center justify-center gap-2">
+                            {infraModules.map((mod) => (
+                                <span className="architecture-v2-infra-chip" key={mod.label}>
+                                    <LandingIcon className="size-3.5" icon={mod.icon} />
+                                    {mod.label}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                </Reveal>
+
+                <Reveal className="mt-7 max-w-2xl">
+                    <p className="text-sm leading-7 text-ink-secondary">
+                        Clear boundaries now, microservices later — only if you ever need them.
+                    </p>
+                    <Link className="landing-text-link mt-4" href="/docs/architecture">
+                        See how it&apos;s structured
+                        <LandingIcon className="size-4" icon="ph:arrow-right" />
+                    </Link>
+                </Reveal>
             </div>
         </section>
     );
