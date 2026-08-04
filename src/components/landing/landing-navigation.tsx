@@ -13,6 +13,17 @@ const navigation = [
     { href: "/#workflows", label: "Workflows" },
 ] as const;
 
+const iconButton =
+    "inline-flex size-11 cursor-pointer items-center justify-center rounded-sm border border-line bg-surface text-ink active:scale-[0.97] hover:border-[color-mix(in_srgb,var(--accent)_45%,var(--border))] hover:bg-surface-hover";
+
+const mobileLink =
+    "flex min-h-12 items-center justify-between rounded-sm border border-transparent px-3 text-[0.9375rem] font-semibold text-ink-secondary hover:border-[color-mix(in_srgb,var(--accent)_45%,var(--border))] hover:bg-surface-hover";
+
+const mobileLinkPro =
+    "flex min-h-12 items-center justify-between rounded-sm border border-brand bg-brand px-3 text-[0.9375rem] font-semibold text-brand-foreground hover:bg-[color-mix(in_srgb,var(--accent)_90%,var(--foreground))]";
+
+const navLink = "inline-flex min-h-11 items-center text-[0.8125rem] font-semibold text-ink-secondary hover:text-ink";
+
 function subscribeToHydration() {
     return () => {};
 }
@@ -30,7 +41,7 @@ function ThemeToggle() {
     return (
         <button
             aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-            className="landing-icon-button"
+            className={iconButton}
             onClick={() => setTheme(dark ? "light" : "dark")}
             type="button"
         >
@@ -44,14 +55,11 @@ export function LandingNavigation() {
 
     return (
         <>
-            <a className="landing-skip-link" href="#main-content">
-                Skip to main content
-            </a>
-            <header className="landing-nav">
+            <header className="sticky top-0 z-20 border-b border-line bg-[color-mix(in_srgb,var(--background)_88%,transparent)] backdrop-blur-[18px]">
                 <div className="site-container flex h-18 items-center justify-between gap-4">
                     <Link
                         aria-label={`${appName} home`}
-                        className="landing-brand min-w-0"
+                        className="inline-flex min-w-0 items-center gap-3"
                         href="/"
                         onClick={() => setOpen(false)}
                     >
@@ -70,7 +78,7 @@ export function LandingNavigation() {
 
                     <nav aria-label="Primary navigation" className="hidden items-center gap-7 lg:flex">
                         {navigation.map((item) => (
-                            <Link className="landing-nav-link" href={item.href} key={item.href}>
+                            <Link className={navLink} href={item.href} key={item.href}>
                                 {item.label}
                             </Link>
                         ))}
@@ -79,7 +87,7 @@ export function LandingNavigation() {
                     <div className="flex items-center gap-2">
                         <Link
                             aria-label="Open the GitHub repository"
-                            className="landing-github-button landing-icon-button"
+                            className={`hidden min-[40rem]:inline-flex ${iconButton}`}
                             href={githubUrl}
                             rel="noreferrer"
                             target="_blank"
@@ -87,11 +95,14 @@ export function LandingNavigation() {
                             <LandingIcon className="size-5" icon="ph:github-logo" />
                         </Link>
                         <ThemeToggle />
-                        <Link className="landing-pro-button landing-button landing-button-secondary" href={freeRoute}>
+                        <Link
+                            className="landing-button landing-button-secondary hidden lg:inline-flex"
+                            href={freeRoute}
+                        >
                             Explore Free Plan
                             <LandingIcon className="size-4" icon="ph:arrow-right" />
                         </Link>
-                        <Link className="landing-pro-button landing-button landing-button-primary" href={proRoute}>
+                        <Link className="landing-button landing-button-primary hidden lg:inline-flex" href={proRoute}>
                             Explore Pro Plan
                             <LandingIcon className="size-4" icon="ph:arrow-right" />
                         </Link>
@@ -99,7 +110,7 @@ export function LandingNavigation() {
                             aria-controls="mobile-navigation"
                             aria-expanded={open}
                             aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-                            className="landing-icon-button landing-menu-button"
+                            className={`inline-flex lg:hidden ${iconButton}`}
                             onClick={() => setOpen((value) => !value)}
                             type="button"
                         >
@@ -123,7 +134,7 @@ export function LandingNavigation() {
                         <div className="mb-3 grid gap-1 border-t border-line py-3">
                             {navigation.map((item) => (
                                 <Link
-                                    className="landing-mobile-link"
+                                    className={mobileLink}
                                     href={item.href}
                                     key={item.href}
                                     onClick={() => setOpen(false)}
@@ -132,24 +143,20 @@ export function LandingNavigation() {
                                     <LandingIcon className="size-4" icon="ph:arrow-down-right" />
                                 </Link>
                             ))}
-                            <Link className="landing-mobile-link" href="/docs" onClick={() => setOpen(false)}>
+                            <Link className={mobileLink} href="/docs" onClick={() => setOpen(false)}>
                                 Documentation
                                 <LandingIcon className="size-4" icon="ph:arrow-right" />
                             </Link>
-                            <Link className="landing-mobile-link" href={freeRoute} onClick={() => setOpen(false)}>
+                            <Link className={mobileLink} href={freeRoute} onClick={() => setOpen(false)}>
                                 Free
                                 <LandingIcon className="size-4" icon="ph:arrow-right" />
                             </Link>
-                            <Link
-                                className="landing-mobile-link landing-mobile-pro-link"
-                                href={proRoute}
-                                onClick={() => setOpen(false)}
-                            >
+                            <Link className={mobileLinkPro} href={proRoute} onClick={() => setOpen(false)}>
                                 Get Pro
                                 <LandingIcon className="size-4" icon="ph:arrow-up-right" />
                             </Link>
                             <Link
-                                className="landing-mobile-link"
+                                className={mobileLink}
                                 href={githubUrl}
                                 onClick={() => setOpen(false)}
                                 rel="noreferrer"

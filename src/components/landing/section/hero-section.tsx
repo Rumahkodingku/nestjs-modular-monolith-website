@@ -4,14 +4,31 @@ import { LandingIcon } from "../landing-icon";
 
 export function HeroSection() {
     return (
-        <section className="landing-hero border-b border-line">
-            <div aria-hidden="true" className="landing-hero-v2-wash" />
+        <section className="relative isolate overflow-hidden border-b border-line">
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -z-1"
+                style={{
+                    background:
+                        "radial-gradient(ellipse 44rem 30rem at 50% 26%, var(--ambient-medium), transparent 72%), radial-gradient(ellipse 34rem 22rem at 50% 78%, var(--ambient-soft), transparent 76%)",
+                }}
+            />
 
-            <div aria-hidden="true" className="landing-hero-v2-deco landing-hero-v2-deco-left">
-                <span className="text-[clamp(5rem,10vw,11rem)] font-mono font-bold text-brand/6">{"{"}</span>
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute left-[clamp(1rem,4vw,5rem)] top-[10%] z-0 select-none"
+            >
+                <span className="motion-safe:animate-[landing-hero-deco-drift_10s_cubic-bezier(0.37,0,0.63,1)_infinite_alternate] text-[clamp(5rem,10vw,11rem)] font-mono font-bold text-brand/6">
+                    {"{"}
+                </span>
             </div>
-            <div aria-hidden="true" className="landing-hero-v2-deco landing-hero-v2-deco-right">
-                <span className="text-[clamp(4rem,7vw,8rem)] font-mono font-bold text-brand/6">{"<"}</span>
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-[10%] right-[clamp(1rem,4vw,5rem)] z-0 select-none"
+            >
+                <span className="motion-safe:animate-[landing-hero-deco-drift_10s_cubic-bezier(0.37,0,0.63,1)_infinite_alternate] text-[clamp(4rem,7vw,8rem)] font-mono font-bold text-brand/6">
+                    {"<"}
+                </span>
             </div>
 
             <div className="site-container relative flex min-h-[calc(100dvh-4.5rem)] flex-col items-center justify-center py-14 text-center lg:py-16">
@@ -23,7 +40,7 @@ export function HeroSection() {
                         <span className="text-brand">Ship</span> the product.
                     </h1>
 
-                    <p className="landing-enter landing-enter-delay-2 mt-7 mx-auto max-w-152 text-base leading-7 text-ink-secondary sm:text-lg sm:leading-8">
+                    <p className="landing-enter landing-enter-delay-2 mx-auto mt-7 max-w-152 text-base leading-7 text-ink-secondary sm:text-lg sm:leading-8">
                         Starting a NestJS backend from scratch costs weeks of wiring auth, RBAC, database, and ops. This
                         starter hands you the foundation so your first commit is product work, not plumbing.
                     </p>

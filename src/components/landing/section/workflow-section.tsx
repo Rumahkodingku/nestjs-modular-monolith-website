@@ -56,15 +56,34 @@ const steps: {
     },
 ];
 
+function TerminalDots() {
+    return (
+        <span className="flex flex-none gap-1.5" aria-hidden="true">
+            <span className="size-2 rounded-full" style={{ background: "#ff5f57" }} />
+            <span className="size-2 rounded-full" style={{ background: "#febc2e" }} />
+            <span className="size-2 rounded-full" style={{ background: "#28c840" }} />
+        </span>
+    );
+}
+
+function TerminalBar() {
+    return (
+        <div className="flex items-center gap-2 border-b border-white/8 px-4 py-2.5">
+            <TerminalDots />
+            <span className="font-mono text-[0.6875rem] uppercase tracking-widest text-white/35">terminal</span>
+        </div>
+    );
+}
+
 function TerminalBlock({ lines }: { lines: TerminalLine[] }) {
     return (
-        <div className="workflow-v2-terminal-body">
+        <div className="flex-1 overflow-y-auto p-4 font-mono text-[0.6875rem] leading-[1.85]">
             {lines.map((line, i) =>
                 line.text === "" ? (
                     <div className="h-2.5" key={i} />
                 ) : (
                     <div
-                        className={`workflow-v2-terminal-line ${line.type === "ok" ? "workflow-v2-terminal-line-ok" : ""}`}
+                        className={`whitespace-pre-wrap break-all ${line.type === "ok" ? "text-emerald-400" : "text-white/45"}`}
                         key={i}
                     >
                         {line.text}
@@ -107,15 +126,8 @@ export function WorkflowSection() {
 
                 <div className="mt-14 grid gap-10 md:grid-cols-[minmax(0,1.1fr)_minmax(19rem,0.9fr)] lg:gap-16">
                     <div className="sticky top-24 hidden h-[calc(100dvh-8rem)] min-h-136 max-h-208 md:block">
-                        <div className="workflow-v2-visual h-full">
-                            <div className="workflow-v2-terminal-bar">
-                                <div className="workflow-v2-terminal-dots">
-                                    <span className="workflow-v2-terminal-dot" />
-                                    <span className="workflow-v2-terminal-dot" />
-                                    <span className="workflow-v2-terminal-dot" />
-                                </div>
-                                <span className="workflow-v2-terminal-label">terminal</span>
-                            </div>
+                        <div className="flex h-full flex-col overflow-hidden rounded-sm border border-line bg-code">
+                            <TerminalBar />
 
                             <AnimatePresence initial={false} mode="wait">
                                 <motion.div
@@ -128,18 +140,26 @@ export function WorkflowSection() {
                                 >
                                     <TerminalBlock lines={activeStep.snippet} />
 
-                                    <div className="workflow-v2-progress">
-                                        <div className="workflow-v2-progress-track">
+                                    <div className="border-t border-white/6 px-4 py-3">
+                                        <div className="h-0.5 w-full overflow-hidden rounded-full bg-white/8">
                                             <div
-                                                className="workflow-v2-progress-fill"
-                                                style={{ width: `${progressPct}%` }}
+                                                className="h-full rounded-full transition-[width] duration-500 ease-(--ease-out-ui)"
+                                                style={{
+                                                    width: `${progressPct}%`,
+                                                    background:
+                                                        "linear-gradient(to right, var(--accent), color-mix(in srgb, var(--accent) 70%, rgb(255 255 255)))",
+                                                }}
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="workflow-v2-visual-footer">
-                                        <span className="workflow-v2-visual-tag">Active workflow</span>
-                                        <p className="workflow-v2-visual-title">{activeStep.title}</p>
+                                    <div className="border-t border-white/6 px-4 py-3">
+                                        <span className="font-mono text-[0.5625rem] uppercase tracking-[0.14em] text-white/35">
+                                            Active workflow
+                                        </span>
+                                        <p className="mt-1 text-base font-semibold tracking-[-0.01em] text-[#f7f3f4]">
+                                            {activeStep.title}
+                                        </p>
                                     </div>
                                 </motion.div>
                             </AnimatePresence>
@@ -156,20 +176,13 @@ export function WorkflowSection() {
                                     key={step.title}
                                 >
                                     <div className="mb-6 overflow-hidden rounded-md border border-line bg-code md:hidden">
-                                        <div className="workflow-v2-terminal-bar">
-                                            <div className="workflow-v2-terminal-dots">
-                                                <span className="workflow-v2-terminal-dot" />
-                                                <span className="workflow-v2-terminal-dot" />
-                                                <span className="workflow-v2-terminal-dot" />
-                                            </div>
-                                            <span className="workflow-v2-terminal-label">terminal</span>
-                                        </div>
+                                        <TerminalBar />
                                         <TerminalBlock lines={step.snippet} />
                                     </div>
 
                                     <div
                                         className={`transition-[opacity,transform] duration-400 ease-out ${
-                                            active ? "opacity-100 md:translate-x-0" : "opacity-50 md:translate-x-[0.375rem]"
+                                            active ? "opacity-100 md:translate-x-0" : "opacity-50 md:translate-x-1.5"
                                         }`}
                                     >
                                         <LandingIcon

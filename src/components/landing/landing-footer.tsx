@@ -19,16 +19,21 @@ export function LandingFooter() {
                     </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-ink-secondary">
-                    <Link className="landing-footer-link" href="/docs">
+                    <Link className="inline-flex min-h-11 items-center hover:text-ink" href="/docs">
                         Documentation
                     </Link>
-                    <Link className="landing-footer-link" href={freeRoute}>
+                    <Link className="inline-flex min-h-11 items-center hover:text-ink" href={freeRoute}>
                         Free
                     </Link>
-                    <Link className="landing-footer-link" href={proRoute}>
+                    <Link className="inline-flex min-h-11 items-center hover:text-ink" href={proRoute}>
                         Pro
                     </Link>
-                    <Link className="landing-footer-link" href={githubUrl} rel="noreferrer" target="_blank">
+                    <Link
+                        className="inline-flex min-h-11 items-center hover:text-ink"
+                        href={githubUrl}
+                        rel="noreferrer"
+                        target="_blank"
+                    >
                         GitHub
                     </Link>
                     <span>© {new Date().getFullYear()}</span>
