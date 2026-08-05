@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { proRoute } from "@/lib/shared";
+import { landingButton, landingButtonPrimary, landingButtonSecondary } from "@/lib/button-styles";
 import { LandingIcon } from "../landing-icon";
 import { Reveal } from "../landing-motion";
 import { NestJsIcon } from "@/components/ui/icon";
@@ -17,12 +18,12 @@ export function FinalCtaSection() {
                             you&apos;d write yourself — so you can spend your time on the product.
                         </p>
                         <div className="mt-8 flex flex-col gap-3 min-[420px]:flex-row">
-                            <Link className="landing-button landing-button-primary" href={proRoute}>
+                            <Link className={`${landingButton} ${landingButtonPrimary}`} href={proRoute}>
                                 Get Pro
                                 <LandingIcon className="size-4" icon="ph:arrow-right" />
                             </Link>
                             <Link
-                                className="landing-button landing-button-secondary"
+                                className={`${landingButton} ${landingButtonSecondary}`}
                                 href="/docs/getting-started"
                             >
                                 Start free

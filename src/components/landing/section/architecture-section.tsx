@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LandingIcon } from "../landing-icon";
+import { landingTextLink } from "@/lib/button-styles";
 import { Reveal } from "../landing-motion";
 
 const appModules = [
@@ -107,7 +108,7 @@ export function ArchitectureSection() {
                     <p className="text-sm leading-7 text-ink-secondary">
                         Clear boundaries now, microservices later — only if you ever need them.
                     </p>
-                    <Link className="landing-text-link mt-4" href="/docs/architecture">
+                    <Link className={`${landingTextLink} mt-4`} href="/docs/architecture">
                         See how it&apos;s structured
                         <LandingIcon className="size-4" icon="ph:arrow-right" />
                     </Link>

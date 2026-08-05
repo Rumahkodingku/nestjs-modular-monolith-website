@@ -293,7 +293,7 @@ html > body[data-scroll-locked] {
     -webkit-tap-highlight-color: transparent;
 }
 
-.landing-accent-label {
+@utility landing-accent-label {
     color: var(--accent);
 }
 
@@ -301,7 +301,7 @@ html > body[data-scroll-locked] {
     color: color-mix(in srgb, var(--accent) 85%, var(--foreground));
 }
 
-.landing-section-title {
+@utility landing-section-title {
     max-width: 68rem;
     font-size: clamp(2.65rem, 7vw, 5.75rem);
     font-weight: 500;
@@ -309,50 +309,11 @@ html > body[data-scroll-locked] {
     letter-spacing: -0.06em;
 }
 
-.landing-section-copy {
+@utility landing-section-copy {
     max-width: 43rem;
     color: var(--muted-foreground);
     font-size: clamp(1rem, 1.5vw, 1.125rem);
     line-height: 1.75;
-}
-
-.landing-button {
-    display: inline-flex;
-    min-height: 3rem;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    padding-inline: 1.15rem;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    white-space: nowrap;
-}
-
-.landing-button-primary {
-    border-color: var(--accent);
-    background: var(--accent);
-    color: var(--accent-foreground);
-}
-
-.landing-button-secondary {
-    border-color: var(--border);
-    background: var(--surface);
-    color: var(--foreground);
-}
-
-.landing-text-link {
-    display: inline-flex;
-    min-height: 2.75rem;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--foreground);
-    font-size: 0.8125rem;
-    font-weight: 700;
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
-    text-underline-offset: 0.35rem;
 }
 
 .landing-feature-card {
@@ -545,31 +506,10 @@ html > body[data-scroll-locked] {
 }
 
 @media (hover: hover) and (pointer: fine) {
-    .landing-button-secondary:hover {
-        border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-        background: var(--surface-hover);
-    }
-
-    .landing-button-primary:hover {
-        background: color-mix(in srgb, var(--accent) 90%, var(--foreground));
-    }
-
     .landing-feature-card:hover {
         border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
         transform: translateY(-3px);
     }
-
-    .landing-text-link:hover {
-        color: var(--accent);
-    }
-
-    .dark .landing-text-link:hover {
-        color: color-mix(in srgb, var(--accent) 85%, var(--foreground));
-    }
-}
-
-.landing-button:active {
-    transform: scale(0.97);
 }
 
 @keyframes landing-rise {

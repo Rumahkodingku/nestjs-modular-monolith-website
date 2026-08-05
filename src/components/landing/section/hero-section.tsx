@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { githubUrl, proRoute } from "@/lib/shared";
+import { landingButton, landingButtonPrimary, landingButtonSecondary } from "@/lib/button-styles";
 import { LandingIcon } from "../landing-icon";
 
 export function HeroSection() {
@@ -46,12 +47,12 @@ export function HeroSection() {
                     </p>
 
                     <div className="landing-enter landing-enter-delay-3 mt-9 flex flex-col items-center gap-3 min-[420px]:flex-row min-[420px]:justify-center">
-                        <Link className="landing-button landing-button-primary" href={proRoute}>
+                        <Link className={`${landingButton} ${landingButtonPrimary}`} href={proRoute}>
                             Get the Pro Starter
                             <LandingIcon className="size-4" icon="ph:arrow-right" />
                         </Link>
                         <Link
-                            className="landing-button landing-button-secondary"
+                            className={`${landingButton} ${landingButtonSecondary}`}
                             href={githubUrl}
                             rel="noreferrer"
                             target="_blank"

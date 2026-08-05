@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useTheme } from "fumadocs-ui/provider/base";
 import { appName, freeRoute, githubUrl, proRoute } from "@/lib/shared";
+import { landingButton, landingButtonPrimary, landingButtonSecondary } from "@/lib/button-styles";
 import { LandingIcon } from "./landing-icon";
 import { NestJsIcon } from "../ui/icon";
 
@@ -52,6 +53,46 @@ function ThemeToggle() {
 
 export function LandingNavigation() {
     const [open, setOpen] = useState(false);
+    const hamburgerRef = useRef<HTMLButtonElement>(null);
+    const mobileNavRef = useRef<HTMLElement>(null);
+    const wasOpenRef = useRef(false);
+
+    useEffect(() => {
+        if (!open) return;
+        const original = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = original;
+        };
+    }, [open]);
+
+    useEffect(() => {
+        const mq = window.matchMedia("(min-width: 768px)");
+        const handler = (e: MediaQueryListEvent) => {
+            if (e.matches) setOpen(false);
+        };
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler);
+    }, []);
+
+    useEffect(() => {
+        if (!open) return;
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setOpen(false);
+        };
+        window.addEventListener("keydown", handler);
+        return () => window.removeEventListener("keydown", handler);
+    }, [open]);
+
+    useEffect(() => {
+        if (open) {
+            wasOpenRef.current = true;
+            const first = mobileNavRef.current?.querySelector<HTMLElement>("a,button");
+            first?.focus();
+        } else if (wasOpenRef.current) {
+            hamburgerRef.current?.focus();
+        }
+    }, [open]);
 
     return (
         <>
@@ -63,7 +104,7 @@ export function LandingNavigation() {
                         href="/"
                         onClick={() => setOpen(false)}
                     >
-                        <span aria-hidden="true" className="px-3">
+                        <span aria-hidden="true" className="px-2 sm:px-3">
                             <NestJsIcon className="size-5" />
                         </span>
                         <span className="min-w-0 leading-none">
@@ -76,7 +117,7 @@ export function LandingNavigation() {
                         </span>
                     </Link>
 
-                    <nav aria-label="Primary navigation" className="hidden items-center gap-7 lg:flex">
+                    <nav aria-label="Primary navigation" className="hidden items-center gap-7 md:flex">
                         {navigation.map((item) => (
                             <Link className={navLink} href={item.href} key={item.href}>
                                 {item.label}
@@ -87,7 +128,7 @@ export function LandingNavigation() {
                     <div className="flex items-center gap-2">
                         <Link
                             aria-label="Open the GitHub repository"
-                            className={`hidden min-[40rem]:inline-flex ${iconButton}`}
+                            className={`hidden sm:inline-flex ${iconButton}`}
                             href={githubUrl}
                             rel="noreferrer"
                             target="_blank"
@@ -96,21 +137,25 @@ export function LandingNavigation() {
                         </Link>
                         <ThemeToggle />
                         <Link
-                            className="landing-button landing-button-secondary hidden lg:inline-flex"
+                            className={`${landingButton} ${landingButtonSecondary} hidden md:inline-flex`}
                             href={freeRoute}
                         >
                             Explore Free Plan
                             <LandingIcon className="size-4" icon="ph:arrow-right" />
                         </Link>
-                        <Link className="landing-button landing-button-primary hidden lg:inline-flex" href={proRoute}>
+                        <Link
+                            className={`${landingButton} ${landingButtonPrimary} hidden lg:inline-flex`}
+                            href={proRoute}
+                        >
                             Explore Pro Plan
                             <LandingIcon className="size-4" icon="ph:arrow-right" />
                         </Link>
                         <button
+                            ref={hamburgerRef}
                             aria-controls="mobile-navigation"
                             aria-expanded={open}
                             aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-                            className={`inline-flex lg:hidden ${iconButton}`}
+                            className={`inline-flex md:hidden ${iconButton}`}
                             onClick={() => setOpen((value) => !value)}
                             type="button"
                         >
@@ -120,9 +165,10 @@ export function LandingNavigation() {
                 </div>
 
                 <nav
+                    ref={mobileNavRef}
                     aria-hidden={!open}
                     aria-label="Mobile navigation"
-                    className="site-container grid overflow-hidden transition-[grid-template-rows,opacity] duration-200 ease-out lg:hidden"
+                    className="site-container grid overflow-hidden transition-[grid-template-rows,opacity] duration-200 ease-out md:hidden"
                     id="mobile-navigation"
                     inert={!open}
                     style={{
@@ -130,7 +176,7 @@ export function LandingNavigation() {
                         opacity: open ? 1 : 0,
                     }}
                 >
-                    <div className="min-h-0">
+                    <div className="min-h-0 max-h-[calc(100dvh-4.5rem)] overflow-y-auto overscroll-contain">
                         <div className="mb-3 grid gap-1 border-t border-line py-3">
                             {navigation.map((item) => (
                                 <Link

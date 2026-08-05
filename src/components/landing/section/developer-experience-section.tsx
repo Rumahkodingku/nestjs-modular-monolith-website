@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LandingIcon } from "../landing-icon";
+import { landingTextLink } from "@/lib/button-styles";
 import { Reveal } from "../landing-motion";
 
 const capabilities = [
@@ -108,7 +109,7 @@ export function DeveloperExperienceSection() {
                             </div>
                         ))}
                     </dl>
-                    <Link className="landing-text-link mt-10" href="/docs/getting-started">
+                    <Link className={`${landingTextLink} mt-10`} href="/docs/getting-started">
                         Read the setup guide
                         <LandingIcon className="size-4" icon="ph:arrow-right" />
                     </Link>

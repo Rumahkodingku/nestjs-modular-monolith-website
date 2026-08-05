@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LandingFooter } from "@/components/landing/landing-footer";
 import { LandingIcon } from "@/components/landing/landing-icon";
 import { LandingNavigation } from "@/components/landing/landing-navigation";
+import { landingButton, landingButtonPrimary, landingButtonSecondary } from "@/lib/button-styles";
 import { githubUrl } from "@/lib/shared";
 
 const title = "NestJS Modular Monolith Pro";
@@ -132,8 +133,7 @@ const proFeatures = [
     {
         id: "modular-monolith-architecture",
         title: "Modular Monolith Architecture",
-        description:
-            "Clear module ownership without the operational complexity of distributed services.",
+        description: "Clear module ownership without the operational complexity of distributed services.",
         items: [
             "Independent authentication, users, and RBAC business modules",
             "Presentation, application, domain, infrastructure, and public API layers",
@@ -146,8 +146,7 @@ const proFeatures = [
     {
         id: "nestjs-monorepo-workspace",
         title: "NestJS Monorepo Workspace",
-        description:
-            "NestJS workspace that keeps the API application and reusable libraries in one repository.",
+        description: "NestJS workspace that keeps the API application and reusable libraries in one repository.",
         items: [
             "Application and library projects managed by Nest CLI",
             "TypeScript path aliases for public module APIs",
@@ -160,7 +159,8 @@ const proFeatures = [
     {
         id: "eslint-boundaries-configuration",
         title: "ESLint Boundaries Configuration",
-        description: "Enforced architectural boundaries prevent accidental coupling and internal imports between modules.",
+        description:
+            "Enforced architectural boundaries prevent accidental coupling and internal imports between modules.",
         items: [
             "Explicit app, module, shared-library, script, and test boundaries",
             "Public API enforcement for cross-module imports",
@@ -201,8 +201,7 @@ const proFeatures = [
     {
         id: "audit-log",
         title: "Audit Log",
-        description:
-            "Traceable RBAC administration history with before-and-after state for sensitive access changes.",
+        description: "Traceable RBAC administration history with before-and-after state for sensitive access changes.",
         items: [
             "Role, permission, role-assignment, and user-override events",
             "Actor, action, target, timestamp, and request-ID capture",
@@ -351,12 +350,12 @@ export default function ProPage() {
                                     workflows in the complete documentation.
                                 </p>
                                 <div className="mt-8 flex flex-col gap-3 min-[420px]:flex-row">
-                                    <Link className="landing-button landing-button-primary" href="/docs">
+                                    <Link className={`${landingButton} ${landingButtonPrimary}`} href="/docs">
                                         Read the documentation
                                         <LandingIcon className="size-4" icon="ph:arrow-right" />
                                     </Link>
                                     <Link
-                                        className="landing-button landing-button-secondary"
+                                        className={`${landingButton} ${landingButtonSecondary}`}
                                         href={githubUrl}
                                         rel="noreferrer"
                                         target="_blank"

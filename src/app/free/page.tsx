@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LandingFooter } from "@/components/landing/landing-footer";
 import { LandingIcon } from "@/components/landing/landing-icon";
 import { LandingNavigation } from "@/components/landing/landing-navigation";
+import { landingButton, landingButtonPrimary, landingButtonSecondary } from "@/lib/button-styles";
 import { githubUrl } from "@/lib/shared";
 
 const title = "NestJS Modular Monolith Free";
@@ -32,8 +33,7 @@ const freeFeatures = [
     {
         id: "role-based-access-control",
         title: "Role-Based Access Control (RBAC)",
-        description:
-            "Built-in role-based authorization with global guards, decorators, and automatic role assignment.",
+        description: "Built-in role-based authorization with global guards, decorators, and automatic role assignment.",
         items: [
             "Two built-in roles — ADMIN and USER — seeded at startup",
             "Role entity with UUID primary key, unique name, and timestamps",
@@ -78,8 +78,7 @@ const freeFeatures = [
     {
         id: "configuration--validation",
         title: "Configuration & Validation",
-        description:
-            "Centralized, typed environment configuration validated at bootstrap with Joi schemas.",
+        description: "Centralized, typed environment configuration validated at bootstrap with Joi schemas.",
         items: [
             "Centralized .env loading via @nestjs/config",
             "Joi validation schema checking 12 environment variables at bootstrap",
@@ -91,8 +90,7 @@ const freeFeatures = [
     {
         id: "openapi--swagger",
         title: "OpenAPI / Swagger",
-        description:
-            "Interactive API documentation generated automatically from DTOs and controller decorators.",
+        description: "Interactive API documentation generated automatically from DTOs and controller decorators.",
         items: [
             "Swagger UI at /api/docs via SwaggerModule.setup()",
             "Raw OpenAPI JSON at /api/docs-json for tooling consumption",
@@ -131,8 +129,7 @@ const freeFeatures = [
     {
         id: "seeder",
         title: "Idempotent Seeder",
-        description:
-            "Repeatable database seeding for roles and admin users that safely skips existing records.",
+        description: "Repeatable database seeding for roles and admin users that safely skips existing records.",
         items: [
             "Idempotent role seeding — ADMIN and USER skipped if already present",
             "Idempotent admin user seeding via ADMIN_EMAIL and ADMIN_PASSWORD env vars",
@@ -156,8 +153,7 @@ const freeFeatures = [
     {
         id: "testing",
         title: "Testing",
-        description:
-            "Unit and end-to-end test setup with Jest, path aliases, and dedicated configurations.",
+        description: "Unit and end-to-end test setup with Jest, path aliases, and dedicated configurations.",
         items: [
             "7 unit test spec files covering 33 test cases",
             "Auth — registration, login, and password-change flows",
@@ -172,8 +168,7 @@ const freeFeatures = [
     {
         id: "architecture-patterns",
         title: "Modular Monolith Architecture",
-        description:
-            "NestJS monorepo with seven libraries, public service interfaces, and strict module boundaries.",
+        description: "NestJS monorepo with seven libraries, public service interfaces, and strict module boundaries.",
         items: [
             "NestJS monorepo — one API application plus seven libraries",
             "Modular boundaries with public service interfaces and injection tokens",
@@ -233,8 +228,8 @@ export default function FreePage() {
                             <p>
                                 Production-minded backend foundation with secure authentication, role-based access
                                 control, user management, PostgreSQL, OpenAPI documentation, and operational tooling.
-                                Everything you need to start shipping business logic without rebuilding authentication and
-                                authorization from scratch.
+                                Everything you need to start shipping business logic without rebuilding authentication
+                                and authorization from scratch.
                             </p>
                             {freeFeatures.map((feature) => (
                                 <Fragment key={feature.id}>
@@ -265,12 +260,12 @@ export default function FreePage() {
                                     documentation, or clone the repository and get started in minutes.
                                 </p>
                                 <div className="mt-8 flex flex-col gap-3 min-[420px]:flex-row">
-                                    <Link className="landing-button landing-button-primary" href="/docs">
+                                    <Link className={`${landingButton} ${landingButtonPrimary}`} href="/docs">
                                         Read the documentation
                                         <LandingIcon className="size-4" icon="ph:arrow-right" />
                                     </Link>
                                     <Link
-                                        className="landing-button landing-button-secondary"
+                                        className={`${landingButton} ${landingButtonSecondary}`}
                                         href={githubUrl}
                                         rel="noreferrer"
                                         target="_blank"
