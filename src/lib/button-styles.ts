@@ -1,7 +1,3 @@
-// Shared button primitives — migrated from global.css to Tailwind utility classes.
-// Every component that renders CTAs, links, or action buttons uses these constants
-// instead of referencing global CSS class strings.
-
 export const landingButton =
     "inline-flex min-h-12 items-center justify-center gap-2.5 border border-transparent rounded-sm px-[1.15rem] text-[0.8125rem] font-bold whitespace-nowrap active:scale-[0.97]";
 

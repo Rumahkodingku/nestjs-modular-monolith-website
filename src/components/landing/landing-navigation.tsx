@@ -29,24 +29,50 @@ function subscribeToHydration() {
     return () => {};
 }
 
-function ThemeToggle() {
+// Shared hook so the desktop icon-button and the mobile menu row can reuse the same theme state
+function useThemeState() {
     const { resolvedTheme, setTheme } = useTheme();
     const mounted = useSyncExternalStore(
         subscribeToHydration,
         () => true,
         () => false,
     );
-
     const dark = mounted && resolvedTheme === "dark";
+    return { mounted, dark, setTheme };
+}
+
+// Desktop / tablet icon-only toggle — hidden below md
+function ThemeToggle() {
+    const { mounted, dark, setTheme } = useThemeState();
 
     return (
         <button
             aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-            className={iconButton}
+            className={`hidden md:inline-flex ${iconButton}`}
             onClick={() => setTheme(dark ? "light" : "dark")}
             type="button"
         >
             <LandingIcon className="size-5" icon={mounted ? (dark ? "ph:sun" : "ph:moon") : "ph:circle-half"} />
+        </button>
+    );
+}
+
+// Mobile menu row version — lives inside the hamburger dropdown
+function MobileThemeToggle({ onToggle }: { onToggle?: () => void }) {
+    const { mounted, dark, setTheme } = useThemeState();
+
+    return (
+        <button
+            aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+            className={mobileLink}
+            onClick={() => {
+                setTheme(dark ? "light" : "dark");
+                onToggle?.();
+            }}
+            type="button"
+        >
+            {dark ? "Light Mode" : "Dark Mode"}
+            <LandingIcon className="size-4" icon={mounted ? (dark ? "ph:sun" : "ph:moon") : "ph:circle-half"} />
         </button>
     );
 }
@@ -117,6 +143,7 @@ export function LandingNavigation() {
                         </span>
                     </Link>
 
+                    {/* Center nav links: only visible md and up */}
                     <nav aria-label="Primary navigation" className="hidden items-center gap-7 md:flex">
                         {navigation.map((item) => (
                             <Link className={navLink} href={item.href} key={item.href}>
@@ -126,30 +153,29 @@ export function LandingNavigation() {
                     </nav>
 
                     <div className="flex items-center gap-2">
+                        {/* GitHub icon: hidden on mobile, shown md and up */}
                         <Link
                             aria-label="Open the GitHub repository"
-                            className={`hidden sm:inline-flex ${iconButton}`}
+                            className={`hidden md:inline-flex ${iconButton}`}
                             href={githubUrl}
                             rel="noreferrer"
                             target="_blank"
                         >
                             <LandingIcon className="size-5" icon="ph:github-logo" />
                         </Link>
+
+                        {/* Theme toggle: hidden on mobile, shown md and up */}
                         <ThemeToggle />
+
                         <Link
-                            className={`${landingButton} ${landingButtonSecondary} hidden md:inline-flex`}
-                            href={freeRoute}
-                        >
-                            Explore Free Plan
-                            <LandingIcon className="size-4" icon="ph:arrow-right" />
-                        </Link>
-                        <Link
-                            className={`${landingButton} ${landingButtonPrimary} hidden lg:inline-flex`}
+                            className={`min-h-12 items-center justify-center gap-2.5 border rounded-sm px-[1.15rem] text-[0.8125rem] font-bold whitespace-nowrap active:scale-[0.97] border-brand bg-brand text-brand-foreground hover:bg-[color-mix(in_srgb,var(--accent)_90%,var(--foreground))] hidden md:inline-flex`}
                             href={proRoute}
                         >
                             Explore Pro Plan
                             <LandingIcon className="size-4" icon="ph:arrow-right" />
                         </Link>
+
+                        {/* Hamburger: only visible below md */}
                         <button
                             ref={hamburgerRef}
                             aria-controls="mobile-navigation"
@@ -193,6 +219,7 @@ export function LandingNavigation() {
                                 Documentation
                                 <LandingIcon className="size-4" icon="ph:arrow-right" />
                             </Link>
+                            <MobileThemeToggle onToggle={() => setOpen(false)} />
                             <Link className={mobileLink} href={freeRoute} onClick={() => setOpen(false)}>
                                 Free
                                 <LandingIcon className="size-4" icon="ph:arrow-right" />
