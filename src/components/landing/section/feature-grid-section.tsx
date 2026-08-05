@@ -63,8 +63,8 @@ export function FeatureGridSection() {
                 <Reveal className="max-w-3xl">
                     <h2 className="landing-section-title">What you stop building yourself</h2>
                     <p className="landing-section-copy mt-5">
-                        Every card below is hours you won&apos;t spend wiring boilerplate — so your sprint zero becomes a
-                        sprint one.
+                        Every card below is hours you won&apos;t spend wiring boilerplate — so your sprint zero becomes
+                        a sprint one.
                     </p>
                 </Reveal>
                 <div className="mt-14 grid auto-rows-fr grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-12">

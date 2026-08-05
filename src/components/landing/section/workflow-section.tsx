@@ -16,32 +16,32 @@ const steps: {
     snippet: TerminalLine[];
 }[] = [
     {
-        title: "Day 1: Users are real",
+        title: "Day 1: Auth that already works",
         description:
-            "Auth, sessions, and the user lifecycle are already wired — so the first request you send actually logs someone in, verifies an email, or manages a role.",
+            "Skip the two weeks most teams lose to JWT, refresh rotation, email verification, and session revocation. The first request you send registers a real user, verifies an email, and returns tokens — through tested flows, not a blog-post scaffold.",
         icon: "ph:fingerprint",
         tasks: [
-            "Register, verify, and log in users on day one — no auth wiring needed.",
-            "Manage sessions, profile updates, and email changes through tested flows.",
+            "Register, verify, and log in users from commit one — no auth wiring, no passport tutorials, no refresh-rotation bugs to chase in prod.",
+            "Sessions, profile updates, email changes, and revocation all run through code that already has tests.",
         ],
         snippet: [
-            { text: '$ curl -X POST /auth/register \\', type: "cmd" },
+            { text: "$ curl -X POST /auth/register \\", type: "cmd" },
             { text: '  -d \'{"email":"dev@..."}\'', type: "cmd" },
             { text: "✓ User registered", type: "ok" },
             { text: "", type: "cmd" },
-            { text: '$ curl -X POST /auth/login \\', type: "cmd" },
+            { text: "$ curl -X POST /auth/login \\", type: "cmd" },
             { text: '  -d \'{"email":"dev@..."}\'', type: "cmd" },
             { text: "✓ Access + refresh tokens", type: "ok" },
         ],
     },
     {
-        title: "Day 2: Ship to prod",
+        title: "Day 2: Production-shaped from commit one",
         description:
-            "Permissions, audit trails, health checks, CI, and the Docker image follow the same path from local to production — nothing to reconfigure.",
+            "The path from pnpm test to a pushed image is one command, not a sprint. Roles, permissions, audit logs, health checks, and a multi-stage Dockerfile all ship modeled and tested — local and prod run the same way, with nothing to reconfigure.",
         icon: "ph:git-branch",
         tasks: [
-            "Roles, permissions, and audit logs ship modeled and tested.",
-            "Health checks, containers, and CI pass the same way locally and in production.",
+            "Roles, permissions, and audit logs ship modeled, tested, and wired — not as TODOs for sprint three.",
+            "47 tests, a multi-stage Docker image, and CI pass identically on your machine and in production.",
         ],
         snippet: [
             { text: "$ pnpm test", type: "cmd" },
@@ -52,6 +52,65 @@ const steps: {
             { text: "", type: "cmd" },
             { text: "$ pnpm build && docker push", type: "cmd" },
             { text: "✓ Ready for deployment", type: "ok" },
+        ],
+    },
+    {
+        title: "Day 3: Migrations, not surprises",
+        description:
+            "Stop hand-writing SQL in app code or rescuing a drifted schema in prod. TypeORM migrations with pgcrypto UUID defaults run in a transaction, preview via dry-run, and revert in one command — every change is auditable, reversible, and never a surprise.",
+        icon: "ph:database",
+        tasks: [
+            "Generate, preview with --dryrun, and revert migrations in one command — no manual SQL, no drift, no 2 a.m. schema fires.",
+            "Every migration runs inside a transaction with pgcrypto UUID defaults on day one.",
+        ],
+        snippet: [
+            { text: "$ pnpm migration:show", type: "cmd" },
+            { text: "[X] 0001_enable_pgcrypto · [ ] 0002_add_tz", type: "cmd" },
+            { text: "", type: "cmd" },
+            { text: "$ pnpm migration:generate \\", type: "cmd" },
+            { text: "  add-user-timezone --pretty --dryrun", type: "cmd" },
+            { text: "✓ 1 pending migration previewed", type: "ok" },
+            { text: "", type: "cmd" },
+            { text: "$ pnpm migration:run", type: "cmd" },
+            { text: "✓ Migrations applied in transaction", type: "ok" },
+        ],
+    },
+    {
+        title: "Day 4: Contracts, not comments",
+        description:
+            "Stop documenting your API in a wiki nobody reads. Scalar serves /docs straight from your OpenAPI spec, Problem Details (application/problem+json) return stable error codes with JSON Pointer fields, and X-Request-Id correlates every request across logs and audit — contracts your frontend can code against, not comments that drift.",
+        icon: "ph:file-code",
+        tasks: [
+            "Ship /docs (Scalar) and /openapi.json with auth, refresh, and CSRF security schemes spec'd — your frontend team codes against the contract, not a Slack thread.",
+            "Return Problem Details with JSON Pointer fields and stable error codes — invalid_email means invalid_email in every client, every time.",
+        ],
+        snippet: [
+            { text: "$ OPENAPI_ENABLED=true pnpm start:dev", type: "cmd" },
+            { text: "✓ /docs + /openapi.json ready", type: "ok" },
+            { text: "", type: "cmd" },
+            { text: "$ curl :3000/api/v1/auth/register \\", type: "cmd" },
+            { text: '  -d \'{"email":"bad"}\'', type: "cmd" },
+            { text: "✓ 422 · invalid_email · pointer /email", type: "ok" },
+        ],
+    },
+    {
+        title: "Day 5: Operate like it's production",
+        description:
+            "Day-two ops aren't a phase you bolt on later. Winston logs ship as JSON in prod and human-readable in dev, /health/liveness and /health/readiness (Postgres + heap) feed your container's probe every 30s, and X-Request-Id correlates any request across logs and audit — so the 3 a.m. incident takes minutes, not hours.",
+        icon: "ph:activity",
+        tasks: [
+            "Container health checks probe /health/readiness (Postgres + heap) every 30s — orchestrators pull before traffic routes.",
+            "Any request is one X-Request-Id away across logs and audit; Mailpit catches every email in dev so nothing reaches a real customer by accident.",
+        ],
+        snippet: [
+            { text: "$ curl :3000/health/readiness", type: "cmd" },
+            { text: '✓ {"status":"ok","db":"ok","heap":"ok"}', type: "ok" },
+            { text: "", type: "cmd" },
+            { text: "$ docker compose up -d mailpit", type: "cmd" },
+            { text: "✓ SMTP :1025 · UI :8025", type: "ok" },
+            { text: "", type: "cmd" },
+            { text: "$ rg 'checkout-2026-0001' logs/", type: "cmd" },
+            { text: "✓ correlated request + 2 audit records", type: "ok" },
         ],
     },
 ];
@@ -116,11 +175,12 @@ export function WorkflowSection() {
             <div className="site-container">
                 <div className="max-w-3xl">
                     <h2 className="landing-section-title">
-                        From <code>git clone</code> to a live API
+                        Skip sprint zero. Ship product from commit one.
                     </h2>
                     <p className="landing-section-copy mt-5">
-                        Two phases, no plumbing in between. Identity on day one, production on day two — that&apos;s the
-                        gap this starter closes.
+                        Five days, zero plumbing. Auth, deployment, migrations, API contracts, and observability —
+                        scaffolded, tested, and waiting before your first product commit. The weeks you&apos;d lose to
+                        wiring become weeks you spend on the actual product.
                     </p>
                 </div>
 
